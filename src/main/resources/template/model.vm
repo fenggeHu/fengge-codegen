@@ -1,0 +1,25 @@
+package ${modelPackage};
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+
+@TableName("${table.name}")
+@ApiModel("${table.remarks}")
+@Data
+public class $_nameString.toClassName("${table.name}") {
+    #foreach($col in $table.columns)
+    /**
+        * $!col.remarks
+        */
+    #if("" != "$!col.remarks")
+    @ApiModelProperty("$!col.remarks")
+    #end
+    private $col.javaType $_nameString.toPropertyName("${col.name}");
+
+    #end
+}
