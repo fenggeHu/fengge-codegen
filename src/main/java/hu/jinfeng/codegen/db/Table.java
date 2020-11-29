@@ -16,4 +16,16 @@ public class Table {
     private String database;
 
     private List<Column> columns;
+
+    public boolean hasDateType() {
+        if (null != columns) {
+            for (Column column : columns) {
+                if ("Date".equalsIgnoreCase(column.getJavaType())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

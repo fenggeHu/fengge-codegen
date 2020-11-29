@@ -4,6 +4,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Properties;
@@ -15,6 +16,7 @@ public class VelocityEngineUtils {
 
     private final static VelocityEngine velocityEngine;
     public final static String LOCAL_RESOURCE_PATH;
+    public final static String LOCAL_TEST_SRC_PATH;
 
     static {
         velocityEngine = new VelocityEngine();
@@ -24,6 +26,8 @@ public class VelocityEngineUtils {
         velocityEngine.setProperty(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
         velocityEngine.init();
         LOCAL_RESOURCE_PATH = VelocityEngineUtils.class.getResource("/").getPath();
+        String codeRoot = new File(LOCAL_RESOURCE_PATH).getParentFile().getParentFile().getAbsolutePath();
+        LOCAL_TEST_SRC_PATH = codeRoot + "/src/test/java/";
     }
 
     /**
@@ -63,6 +67,7 @@ public class VelocityEngineUtils {
         VelocityContext ctx = getVelocityContext(context);
         return parseTemplate(templateContent, ctx);
     }
+
     public static String parseTemplate(String templateContent, Properties properties) {
         VelocityContext ctx = getVelocityContext(properties);
         return parseTemplate(templateContent, ctx);
