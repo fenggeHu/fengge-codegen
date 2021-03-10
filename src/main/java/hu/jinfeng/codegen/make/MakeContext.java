@@ -32,7 +32,7 @@ public class MakeContext  {
      */
     private Table table;
 
-    public Map<String, Object> getContext() {
+    public Map<String, Object> buildContext() {
         Map<String, Object> result = new HashMap<>();
         result.put("database", this.getDatabase());
         result.put("tableName", this.getTableName());

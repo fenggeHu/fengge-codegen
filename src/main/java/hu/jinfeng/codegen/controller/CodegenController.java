@@ -60,7 +60,7 @@ public class CodegenController {
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "servicePackage")
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "controllerPackage")
     })
-    @RequestMapping(value = "/make")
+    @GetMapping(value = "/make")
     public String make(MakeContext makeContext) throws Exception {
         makeContext.setTable(dbHelper.getTableInfo(makeContext.getDatabase(), makeContext.getTableName()));
         return gson.toJson(makeService.execute(makeContext));

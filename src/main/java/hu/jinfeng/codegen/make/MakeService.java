@@ -14,7 +14,7 @@ import java.util.Map;
 public class MakeService {
 
     public boolean execute(MakeContext makeContext) {
-        Map<String, Object> vmContext = makeContext.getContext();
+        Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
         String modelClassName = NameStringUtils.toClassName(makeContext.getTable().getName());
         vmContext.put("modelClassName", modelClassName);
