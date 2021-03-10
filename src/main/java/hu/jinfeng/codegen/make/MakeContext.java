@@ -10,7 +10,7 @@ import java.util.Map;
  * @Author hujinfeng  @Date 2020/11/28
  **/
 @Data
-public class MakeContext  {
+public class MakeContext {
 
     private String database;
 

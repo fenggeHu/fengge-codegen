@@ -1,10 +1,13 @@
 package hu.jinfeng.codegen.make;
 
+import hu.jinfeng.codegen.config.MakeCodeConfiguration;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
 import hu.jinfeng.commons.utils.VelocityEngineUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -12,11 +15,21 @@ import java.util.Map;
  **/
 @Service
 public class MakeService {
+    @Resource
+    private MakeCodeConfiguration makeCodeConfiguration;
+
+    private String getBaseClassName(String tableName) {
+        if (StringUtils.isNotBlank(makeCodeConfiguration.getTablePrefixRemove())
+                && tableName.startsWith(makeCodeConfiguration.getTablePrefixRemove())) {
+            return tableName.substring(makeCodeConfiguration.getTablePrefixRemove().length());
+        }
+        return tableName;
+    }
 
     public boolean execute(MakeContext makeContext) {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
-        String modelClassName = NameStringUtils.toClassName(makeContext.getTable().getName());
+        String modelClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTable().getName()));
         vmContext.put("modelClassName", modelClassName);
         //1，生产model对象
         if (null != makeContext.getModelPackage()) {
@@ -34,7 +47,6 @@ public class MakeService {
                     FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + modelClassName + "Mapper.java";
             FileUtils.writeFile(path, content);
         }
-
 
 
         return true;
