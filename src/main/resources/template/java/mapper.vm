@@ -1,0 +1,19 @@
+package ${mapperPackage};
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.*;
+import ${modelPackage}.${modelClassName};
+
+@Mapper
+public interface ${modelClassName}Mapper extends BaseMapper<${modelClassName}> {
+
+    #if("$!{table.remarks}" !="")
+    @Insert({"<script> INSERT INTO ${table.name} (" +
+        #foreach($col in $table.columns)
+            ${foreach.index}
+            $table.columns.size
+            #if (!${col.autoIncrement}) ${col.name}#if(${foreach.index}!=$table.columns.size-1),#end #end
+        #end
+    #end
+
+}
