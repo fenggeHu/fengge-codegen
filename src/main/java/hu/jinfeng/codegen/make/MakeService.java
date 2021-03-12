@@ -33,7 +33,7 @@ public class MakeService {
         vmContext.put("modelClassName", modelClassName);
         //1，生产model对象
         if (null != makeContext.getModelPackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/model.vm");
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/model.vm");
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = VelocityEngineUtils.LOCAL_TEST_SRC_PATH +
                     FileUtils.package2Path(makeContext.getModelPackage()) + "/" + modelClassName + ".java";
@@ -41,7 +41,7 @@ public class MakeService {
         }
         //2, 生成mapper对象
         if (null != makeContext.getMapperPackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/mapper.vm");
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/mapper.vm");
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = VelocityEngineUtils.LOCAL_TEST_SRC_PATH +
                     FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + modelClassName + "Mapper.java";
