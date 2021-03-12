@@ -6,15 +6,15 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-#if($table.hasDateType())
+#if($tableInfo.hasDateType())
 import java.util.Date;
 #end
 
-@TableName("${table.name}")
-@ApiModel("${table.remarks}")
+@TableName("${tableInfo.name}")
+@ApiModel("${tableInfo.remarks}")
 @Data
 public class ${modelClassName} {
-    #foreach($col in $table.columns)
+    #foreach($col in $tableInfo.columns)
     /**
         * $!col.remarks
         */

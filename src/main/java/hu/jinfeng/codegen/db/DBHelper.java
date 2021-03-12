@@ -4,7 +4,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -39,40 +38,40 @@ public class DBHelper {
         return metaData;
     }
 
-    public List<Table> getAllTables(String database) throws Exception {
-        List<Table> result = new ArrayList<>();
+    public List<TableInfo> getAllTables(String database) throws Exception {
+        List<TableInfo> result = new ArrayList<>();
         DatabaseMetaData metaData = getDatabaseMetaData();
         if (null == database) {
             database = metaData.getConnection().getCatalog();
         }
         ResultSet rs = metaData.getTables(database, null, null, new String[]{"TABLE"});
         while (rs.next()) {
-            Table table = new Table();
-            result.add(table);
-            table.setDatabase(rs.getString("TABLE_CAT"));
-            table.setName(rs.getString("TABLE_NAME"));
-            table.setRemarks(rs.getString("REMARKS"));
+            TableInfo tableInfo = new TableInfo();
+            result.add(tableInfo);
+            tableInfo.setDatabase(rs.getString("TABLE_CAT"));
+            tableInfo.setName(rs.getString("TABLE_NAME"));
+            tableInfo.setRemarks(rs.getString("REMARKS"));
 
-            ResultSet columns = metaData.getColumns(database, "%", table.getName(), "%");
-            table.setColumns(this.fillColumns(columns));
+            ResultSet columns = metaData.getColumns(database, "%", tableInfo.getName(), "%");
+            tableInfo.setColumns(this.fillColumns(columns));
         }
 
         return result;
     }
 
-    private List<Column> fillColumns(ResultSet columns) throws SQLException {
-        List<Column> fields = new ArrayList<>();
+    private List<ColumnInfo> fillColumns(ResultSet columns) throws SQLException {
+        List<ColumnInfo> fields = new ArrayList<>();
         while (columns.next()) {
-            Column column = new Column();
-            column.setDbType(dataSource.getDbType());
-            column.setName(columns.getString("COLUMN_NAME"));
-            column.setType(columns.getString("TYPE_NAME"));
-            column.setSize(columns.getString("COLUMN_SIZE"));
-            column.setRemarks(columns.getString("REMARKS"));
-            column.setTableName(columns.getString("TABLE_NAME"));
-            column.setAutoIncrement("YES".equalsIgnoreCase(columns.getString("IS_AUTOINCREMENT")));
+            ColumnInfo columnInfo = new ColumnInfo();
+            columnInfo.setDbType(dataSource.getDbType());
+            columnInfo.setName(columns.getString("COLUMN_NAME"));
+            columnInfo.setType(columns.getString("TYPE_NAME"));
+            columnInfo.setSize(columns.getString("COLUMN_SIZE"));
+            columnInfo.setRemarks(columns.getString("REMARKS"));
+            columnInfo.setTableName(columns.getString("TABLE_NAME"));
+            columnInfo.setAutoIncrement("YES".equalsIgnoreCase(columns.getString("IS_AUTOINCREMENT")));
             //供参考：null \ CURRENT_TIMESTAMP \0
-            column.setDefaultValue(columns.getString("COLUMN_DEF"));
+            columnInfo.setDefaultValue(columns.getString("COLUMN_DEF"));
 
             System.out.println("=========>>>>>>" + columns.getString("COLUMN_NAME"));
             System.out.println(columns.getObject("DATA_TYPE"));
@@ -90,24 +89,25 @@ public class DBHelper {
             System.out.println(columns.getString("SOURCE_DATA_TYPE"));
             System.out.println(columns.getString("IS_GENERATEDCOLUMN"));
 
-            fields.add(column);
+            fields.add(columnInfo);
         }
         return fields;
     }
 
-    public Table getTableInfo(String database, String tableName) throws Exception {
+    public TableInfo getTableInfo(String database, String tableName) throws Exception {
         DatabaseMetaData metaData = getDatabaseMetaData();
         if (null == database) {
             database = metaData.getConnection().getCatalog();
         }
-        Table table = new Table();
+        TableInfo table = new TableInfo();
         table.setName(tableName);
         table.setDatabase(database);
-        ResultSet rs = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
-        rs.next();
-        table.setRemarks(rs.getString("REMARKS"));
-        ResultSet columns = getDatabaseMetaData().getColumns(database, "%", tableName, "%");
+        ResultSet tableInfo = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
+        tableInfo.next();
+        table.setRemarks(tableInfo.getString("REMARKS"));
+        ResultSet columns = metaData.getColumns(database, "%", tableName, "%");
         table.setColumns(this.fillColumns(columns));
+
 
         return table;
     }

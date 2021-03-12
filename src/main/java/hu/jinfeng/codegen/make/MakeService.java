@@ -29,7 +29,7 @@ public class MakeService {
     public boolean execute(MakeContext makeContext) {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
-        String modelClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTable().getName()));
+        String modelClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName()));
         vmContext.put("modelClassName", modelClassName);
         //1，生产model对象
         if (null != makeContext.getModelPackage()) {

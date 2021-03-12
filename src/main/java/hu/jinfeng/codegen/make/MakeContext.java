@@ -1,6 +1,6 @@
 package hu.jinfeng.codegen.make;
 
-import hu.jinfeng.codegen.db.Table;
+import hu.jinfeng.codegen.db.TableInfo;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -30,13 +30,13 @@ public class MakeContext {
     /**
      *
      */
-    private Table table;
+    private TableInfo tableInfo;
 
     public Map<String, Object> buildContext() {
         Map<String, Object> result = new HashMap<>();
         result.put("database", this.getDatabase());
         result.put("tableName", this.getTableName());
-        result.put("table", this.table);
+        result.put("table", this.tableInfo);
         result.put("modelPackage", this.getModelPackage());
         result.put("queryPackage", this.getQueryPackage());
         result.put("mapperPackage", this.getMapperPackage());

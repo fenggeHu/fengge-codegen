@@ -2,7 +2,7 @@ package hu.jinfeng.codegen.controller;
 
 import com.google.gson.Gson;
 import hu.jinfeng.codegen.db.DBHelper;
-import hu.jinfeng.codegen.db.Table;
+import hu.jinfeng.codegen.db.TableInfo;
 import hu.jinfeng.codegen.make.MakeContext;
 import hu.jinfeng.codegen.make.MakeService;
 import io.swagger.annotations.*;
@@ -35,8 +35,8 @@ public class CodegenController {
     @ApiOperation("取DB 所有表的信息")
     @GetMapping("/getAllTables")
     public String getAllTables(String database) throws Exception {
-        List<Table> tables = dbHelper.getAllTables(database);
-        return gson.toJson(tables);
+        List<TableInfo> tableInfos = dbHelper.getAllTables(database);
+        return gson.toJson(tableInfos);
     }
 
     @ApiOperation("取表信息")
@@ -58,7 +58,7 @@ public class CodegenController {
     })
     @GetMapping(value = "/make")
     public String make(MakeContext makeContext) throws Exception {
-        makeContext.setTable(dbHelper.getTableInfo(makeContext.getDatabase(), makeContext.getTableName()));
+        makeContext.setTableInfo(dbHelper.getTableInfo(makeContext.getDatabase(), makeContext.getTableName()));
         return gson.toJson(makeService.execute(makeContext));
     }
 
