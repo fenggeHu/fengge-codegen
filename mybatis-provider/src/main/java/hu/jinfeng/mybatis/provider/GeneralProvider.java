@@ -78,13 +78,13 @@ public class GeneralProvider {
         String dbFieldName;
         String fieldName;
         Field field;
-        boolean nullable;
-        boolean insertable;
-        boolean updatable;
+        boolean nullable = true;
+        boolean insertable = true;
+        boolean updatable = true;
 
         FieldInfo(Field field, Column column) {
             fieldName = field.getName();
-            if (null != column && !isBlank(column.name())) {
+            if (!isBlank(column.name())) {
                 dbFieldName = column.name();
             } else {
                 if (column.camelCase()) { //驼峰命名规则，createTime 转 create_time
@@ -96,6 +96,17 @@ public class GeneralProvider {
             nullable = column.nullable();
             insertable = column.insertable();
             updatable = column.updatable();
+            field.setAccessible(true);
+            this.field = field;
+        }
+
+        FieldInfo(Field field, Entity entity) {
+            fieldName = field.getName();
+            if (entity.camelCase()) {
+                dbFieldName = NameStringUtils.reverseCamelLowerCase(fieldName);
+            } else {
+                dbFieldName = fieldName;
+            }
             field.setAccessible(true);
             this.field = field;
         }
@@ -124,11 +135,15 @@ public class GeneralProvider {
             Entity entity = cls.getAnnotation(Entity.class);
             if (null == entity) throw new RuntimeException("未指定Entity注解。Class:" + cls.getName());
 
-            boolean tableIsExist = !isBlank(entity.table())
-                    || SharingTable.class.isAssignableFrom(entity.sharingTable());
-            if (!tableIsExist) throw new RuntimeException("未指定表名或生成策略。Class:" + cls.getName());
-
-            if (!isBlank(entity.table())) {
+            boolean notDefinedTable = isBlank(entity.table())
+                    && SharingTable.class.isAssignableFrom(entity.sharingTable());
+            if (notDefinedTable) { //当注解没有设置表名时，使用entity类名转表名
+                if (entity.camelCase()) {
+                    tableName = NameStringUtils.reverseCamelLowerCase(cls.getSimpleName());
+                } else {
+                    tableName = cls.getSimpleName();
+                }
+            } else if (!isBlank(entity.table())) {
                 tableName = entity.table();
             } else if (SharingTable.class.isAssignableFrom(entity.sharingTable())) {
                 sharingTable = (SharingTable) entity.sharingTable().getDeclaredConstructor().newInstance();
@@ -144,7 +159,12 @@ public class GeneralProvider {
                         continue;
                     }
 
-                    FieldInfo fieldInfo = new FieldInfo(field, column);
+                    FieldInfo fieldInfo;
+                    if (null == column) {
+                        fieldInfo = new FieldInfo(field, entity);
+                    } else {
+                        fieldInfo = new FieldInfo(field, column);
+                    }
                     fields.add(fieldInfo);
 
                     if (field.getName().equalsIgnoreCase(entity.primaryKey())) {

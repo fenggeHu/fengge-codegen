@@ -12,17 +12,23 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Entity {
-    /** 表名 **/
+    /**
+     * 表名
+     **/
     String table() default "";
 
-    /** 主键字段名 **/
+    /**
+     * 主键字段名
+     **/
     String primaryKey() default "id";
 
     /**
-     * 当没有设置Column注解的name时，默认实体属性字段映射到表字段规则：0 - 驼峰
+     * 当没有设置Column注解的name时，读取Entity配置。默认驼峰对应关系，属性名 userName <-映射-> 表字段名user_name
      */
-    int columnNameCase() default 0;
+    boolean camelCase() default true;
 
-    /** 分表名字生成器**/
+    /**
+     * 分表名字生成器
+     **/
     Class sharingTable() default Object.class;
 }
