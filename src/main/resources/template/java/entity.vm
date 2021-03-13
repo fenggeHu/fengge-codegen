@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @ApiModel("${tableInfo.remarks}")
-@Entity(table = "${tableInfo.name}", primaryKey = "id")
+@Entity(table = "${tableInfo.name}", primaryKey = "${tableInfo.pkName}")
 public class ${entityClassName} {
     #foreach($col in $tableInfo.columns)
     /**

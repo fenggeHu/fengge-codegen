@@ -46,21 +46,22 @@ public class DBHelper {
         }
         ResultSet rs = metaData.getTables(database, null, null, new String[]{"TABLE"});
         while (rs.next()) {
-            TableInfo tableInfo = new TableInfo();
-            result.add(tableInfo);
-            tableInfo.setDatabase(rs.getString("TABLE_CAT"));
-            tableInfo.setName(rs.getString("TABLE_NAME"));
-            tableInfo.setRemarks(rs.getString("REMARKS"));
+            TableInfo table = new TableInfo();
+            result.add(table);
+            table.setDatabase(rs.getString("TABLE_CAT"));
+            table.setName(rs.getString("TABLE_NAME"));
+            table.setRemarks(rs.getString("REMARKS"));
 
-            ResultSet columns = metaData.getColumns(database, "%", tableInfo.getName(), "%");
-            tableInfo.setColumns(this.fillColumns(columns));
+            ResultSet columns = metaData.getColumns(database, "%", table.getName(), "%");
+            this.fillColumns(table, columns);
         }
 
         return result;
     }
 
-    private List<ColumnInfo> fillColumns(ResultSet columns) throws SQLException {
+    private void fillColumns(final TableInfo table, ResultSet columns) throws SQLException {
         List<ColumnInfo> fields = new ArrayList<>();
+        table.setColumns(fields);
         while (columns.next()) {
             ColumnInfo columnInfo = new ColumnInfo();
             columnInfo.setDbType(dataSource.getDbType());
@@ -89,9 +90,11 @@ public class DBHelper {
             System.out.println(columns.getString("SOURCE_DATA_TYPE"));
             System.out.println(columns.getString("IS_GENERATEDCOLUMN"));
 
+            if (columnInfo.getName().equals(table.getPkName())) {
+                table.setPkColumn(columnInfo);
+            }
             fields.add(columnInfo);
         }
-        return fields;
     }
 
     public TableInfo getTableInfo(String database, String tableName) throws Exception {
@@ -105,9 +108,9 @@ public class DBHelper {
         ResultSet tableInfo = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
         tableInfo.next();
         table.setRemarks(tableInfo.getString("REMARKS"));
+        table.setPkName(tableInfo.getString("PK_NAME"));
         ResultSet columns = metaData.getColumns(database, "%", tableName, "%");
-        table.setColumns(this.fillColumns(columns));
-
+        this.fillColumns(table, columns);
 
         return table;
     }

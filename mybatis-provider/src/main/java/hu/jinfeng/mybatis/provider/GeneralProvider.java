@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class GeneralProvider {
     private static final Map<Class<?>, EntityInfo> ENTITY_INFO_MAP = new ConcurrentHashMap<>();
+//    private static final Map<Class<?>, QueryInfo> QUERY_INFO_MAP = new ConcurrentHashMap<>();
 
     public String insertSQL(Object object) {
         if (null == object) throw new RuntimeException("entity object is null");
@@ -56,6 +57,12 @@ public class GeneralProvider {
 
         return sql.toString();
     }
+
+//    public String querySQL(Object object) {
+//        if (null == object) throw new RuntimeException("query object is null");
+//        QueryInfo entityInfo = QUERY_INFO_MAP.computeIfAbsent(object.getClass(), QueryInfo::new);
+//
+//    }
 
     private String getTableName(EntityInfo entityInfo, Object object) {
         return entityInfo.tableName != null ? entityInfo.tableName : entityInfo.sharingTable.name(object);
@@ -176,4 +183,54 @@ public class GeneralProvider {
             }
         }
     }
+
+//    private static class QueryInfo {
+//        String tableName;
+//        SharingTable sharingTable;
+//        FieldInfo primaryKeyField;
+//        List<FieldInfo> fields = new ArrayList<>();
+//
+//        @SneakyThrows
+//        QueryInfo(Class<?> cls) {
+//            Query query = cls.getAnnotation(Query.class);
+//            if (null == query) throw new RuntimeException("未指定Entity注解。Class:" + cls.getName());
+//
+//            boolean notDefinedTable = isBlank(query.table())
+//                    && SharingTable.class.isAssignableFrom(query.sharingTable());
+//            if (notDefinedTable) { //当注解没有设置表名时，使用entity类名转表名
+//                if (query.camelCase()) {
+//                    tableName = NameStringUtils.reverseCamelLowerCase(cls.getSimpleName());
+//                } else {
+//                    tableName = cls.getSimpleName();
+//                }
+//            } else if (!isBlank(query.table())) {
+//                tableName = query.table();
+//            } else if (SharingTable.class.isAssignableFrom(query.sharingTable())) {
+//                sharingTable = (SharingTable) query.sharingTable().getDeclaredConstructor().newInstance();
+//            }
+//
+//            while (!Object.class.equals(cls)) {
+//                for (Field field : cls.getDeclaredFields()) {
+//                    if (field.isSynthetic()) {
+//                        continue;
+//                    }
+//                    Query column = field.getAnnotation(Query.class);
+//
+//                    FieldInfo fieldInfo;
+//                    if (null == column) {
+//                        fieldInfo = new FieldInfo(field, query);
+//                    } else {
+//                        fieldInfo = new FieldInfo(field, column);
+//                    }
+//                    fields.add(fieldInfo);
+//
+//                    if (field.getName().equalsIgnoreCase(entity.primaryKey())) {
+//                        primaryKeyField = fieldInfo;
+//                    }
+//                }
+//
+//                cls = cls.getSuperclass();
+//            }
+//        }
+//    }
 }
