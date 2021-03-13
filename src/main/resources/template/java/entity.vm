@@ -1,8 +1,6 @@
-package ${modelPackage};
+package ${entityPackage};
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import hu.jinfeng.mybatis.provider.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,10 +8,10 @@ import lombok.Data;
 import java.util.Date;
 #end
 
-@TableName("${tableInfo.name}")
-@ApiModel("${tableInfo.remarks}")
 @Data
-public class ${modelClassName} {
+@ApiModel("${tableInfo.remarks}")
+@Entity(table = "${tableInfo.name}", primaryKey = "id")
+public class ${entityClassName} {
     #foreach($col in $tableInfo.columns)
     /**
         * $!col.remarks

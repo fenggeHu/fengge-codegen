@@ -50,7 +50,7 @@ public class CodegenController {
     @ApiImplicitParams({@ApiImplicitParam(paramType = "query", dataType = "String", name = "database", value = "数据库名称")
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "tableName", value = "表名", required = true)
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "basePackage", defaultValue = "hu.jinfeng")
-            , @ApiImplicitParam(paramType = "query", dataType = "String", name = "modelPackage")
+            , @ApiImplicitParam(paramType = "query", dataType = "String", name = "entityPackage")
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "queryPackage")
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "mapperPackage")
             , @ApiImplicitParam(paramType = "query", dataType = "String", name = "servicePackage")

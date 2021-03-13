@@ -18,7 +18,7 @@ public class MakeContext {
 
     private String basePackage = "hu.jinfeng";
 
-    private String modelPackage;
+    private String entityPackage;
 
     private String queryPackage;
 
@@ -37,7 +37,7 @@ public class MakeContext {
         result.put("database", this.getDatabase());
         result.put("tableName", this.getTableName());
         result.put("table", this.tableInfo);
-        result.put("modelPackage", this.getModelPackage());
+        result.put("entityPackage", this.getEntityPackage());
         result.put("queryPackage", this.getQueryPackage());
         result.put("mapperPackage", this.getMapperPackage());
         result.put("servicePackage", this.getServicePackage());

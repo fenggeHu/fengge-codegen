@@ -29,14 +29,14 @@ public class MakeService {
     public boolean execute(MakeContext makeContext) {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
-        String modelClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName()));
-        vmContext.put("modelClassName", modelClassName);
-        //1，生产model对象
-        if (null != makeContext.getModelPackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/model.vm");
+        String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName()));
+        vmContext.put("entityClassName", entityClassName);
+        //1，生产entity对象
+        if (null != makeContext.getEntityPackage()) {
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/entity.vm");
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = VelocityEngineUtils.LOCAL_TEST_SRC_PATH +
-                    FileUtils.package2Path(makeContext.getModelPackage()) + "/" + modelClassName + ".java";
+                    FileUtils.package2Path(makeContext.getEntityPackage()) + "/" + entityClassName + ".java";
             FileUtils.writeFile(path, content);
         }
         //2, 生成mapper对象
@@ -44,7 +44,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/mapper.vm");
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = VelocityEngineUtils.LOCAL_TEST_SRC_PATH +
-                    FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + modelClassName + "Mapper.java";
+                    FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
             FileUtils.writeFile(path, content);
         }
 

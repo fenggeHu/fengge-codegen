@@ -1,19 +1,20 @@
 package ${mapperPackage};
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+//import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import hu.jinfeng.mybatis.provider.GeneralProvider;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.*;
-import ${modelPackage}.${modelClassName};
+import ${entityPackage}.${entityClassName};
 
 @Mapper
-public interface ${modelClassName}Mapper extends BaseMapper<${modelClassName}> {
+public interface ${entityClassName}Mapper /** extends BaseMapper<${entityClassName}>*/ {
 
-    #if("$!{table.remarks}" !="")
-    @Insert({"<script> INSERT INTO ${table.name} (" +
-        #foreach($col in $table.columns)
-            ${foreach.index}
-            $table.columns.size
-            #if (!${col.autoIncrement}) ${col.name}#if(${foreach.index}!=$table.columns.size-1),#end #end
-        #end
-    #end
+    @InsertProvider(type = GeneralProvider.class, method = "insertSQL")
+    @Options(useGeneratedKeys = true)
+    long insert(${entityClassName} entity);
+
+    @UpdateProvider(type = GeneralProvider.class, method = "updateSQL")
+    int update(${entityClassName} entity);
 
 }
