@@ -16,7 +16,6 @@ public class VelocityEngineUtils {
 
     private final static VelocityEngine velocityEngine;
     public final static String LOCAL_RESOURCE_PATH;
-    public final static String LOCAL_TEST_SRC_PATH;
 
     static {
         velocityEngine = new VelocityEngine();
@@ -27,7 +26,6 @@ public class VelocityEngineUtils {
         velocityEngine.init();
         LOCAL_RESOURCE_PATH = VelocityEngineUtils.class.getResource("/").getPath();
         String codeRoot = new File(LOCAL_RESOURCE_PATH).getParentFile().getParentFile().getAbsolutePath();
-        LOCAL_TEST_SRC_PATH = codeRoot + "/src/test/java/";
     }
 
     /**

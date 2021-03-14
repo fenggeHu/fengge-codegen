@@ -18,5 +18,10 @@ public class MakeCodeConfiguration {
      */
     @Value("${fengge.code.table.prefix.remove}")
     private String tablePrefixRemove;
+    /**
+     * 生成代码输出目录
+     */
+    @Value("${fengge.code.output.path}")
+    private String codeOutputPath;
 
 }

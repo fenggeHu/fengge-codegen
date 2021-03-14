@@ -11,6 +11,7 @@
     <modules>
         <module>mybatis-provider</module>
         <module>codegen</module>
+        <module>codegen-demo</module>
     </modules>
 
     <properties>
@@ -33,6 +34,11 @@
                 <groupId>hu.jinfeng</groupId>
                 <artifactId>mybatis-provider</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>3.5.6</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>

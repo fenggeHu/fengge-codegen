@@ -9,14 +9,20 @@ public class NameStringUtils {
      * 属性命名
      */
     public static String toPropertyName(String name) {
-        return toCamelCase(name);
+        String camel = toCamelCase(name);
+        char[] ch = camel.toCharArray();
+        ch[0] = Character.toLowerCase(ch[0]);
+        return String.valueOf(ch);
     }
 
     /**
      * 类名
      */
     public static String toClassName(String name) {
-        return toCamelCase(name);
+        String camel = toCamelCase(name);
+        char[] ch = camel.toCharArray();
+        ch[0] = Character.toUpperCase(ch[0]);
+        return String.valueOf(ch);
     }
 
     public static String toDBColumnName(String name) {
@@ -46,19 +52,15 @@ public class NameStringUtils {
         char[] ch = name.trim().toCharArray();
         boolean split = false;
         for (int i = 0; i < ch.length; i++) {
-            if (sb.length() == 0) {
+            if (ch[i] == '-' || ch[i] == '_') {
+                split = true;
+                continue;
+            }
+            if (split) {
                 sb.append(Character.toUpperCase(ch[i]));
+                split = false;
             } else {
-                if (ch[i] == '-' || ch[i] == '_') {
-                    split = true;
-                    continue;
-                }
-                if (split) {
-                    sb.append(Character.toUpperCase(ch[i]));
-                    split = false;
-                } else {
-                    sb.append(ch[i]);
-                }
+                sb.append(ch[i]);
             }
         }
 

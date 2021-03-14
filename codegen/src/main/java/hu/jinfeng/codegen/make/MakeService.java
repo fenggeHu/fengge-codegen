@@ -35,7 +35,7 @@ public class MakeService {
         if (null != makeContext.getEntityPackage()) {
             String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/entity.vm");
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-            String path = VelocityEngineUtils.LOCAL_TEST_SRC_PATH +
+            String path = makeCodeConfiguration.getCodeOutputPath() +
                     FileUtils.package2Path(makeContext.getEntityPackage()) + "/" + entityClassName + ".java";
             FileUtils.writeFile(path, content);
         }
@@ -43,7 +43,7 @@ public class MakeService {
         if (null != makeContext.getMapperPackage()) {
             String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/mapper.vm");
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-            String path = VelocityEngineUtils.LOCAL_TEST_SRC_PATH +
+            String path = makeCodeConfiguration.getCodeOutputPath() +
                     FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
             FileUtils.writeFile(path, content);
         }

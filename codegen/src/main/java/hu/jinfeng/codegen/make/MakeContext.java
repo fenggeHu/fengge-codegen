@@ -36,7 +36,7 @@ public class MakeContext {
         Map<String, Object> result = new HashMap<>();
         result.put("database", this.getDatabase());
         result.put("tableName", this.getTableName());
-        result.put("table", this.tableInfo);
+        result.put("tableInfo", this.tableInfo);
         result.put("entityPackage", this.getEntityPackage());
         result.put("queryPackage", this.getQueryPackage());
         result.put("mapperPackage", this.getMapperPackage());
