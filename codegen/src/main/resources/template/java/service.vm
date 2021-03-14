@@ -1,0 +1,19 @@
+package ${servicePackage};
+
+#set($mapperClassName = "${entityClassName}Mapper")
+#set($serviceClassName = "${entityClassName}Service")
+import ${mapperPackage}.${mapperClassName};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * CRUD - ${tableInfo.remarks}
+ **/
+@Service
+public class ${serviceClassName} {
+
+    @Autowired
+    private $mapperClassName $_nameString.classNameToPropertyName(${mapperClassName});
+
+
+}

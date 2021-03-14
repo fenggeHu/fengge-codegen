@@ -47,6 +47,14 @@ public class MakeService {
                     FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
             FileUtils.writeFile(path, content);
         }
+        //3, 生成service
+        if (null != makeContext.getServicePackage()) {
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/service.vm");
+            String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
+            String path = makeCodeConfiguration.getCodeOutputPath() +
+                    FileUtils.package2Path(makeContext.getServicePackage()) + "/" + entityClassName + "Service.java";
+            FileUtils.writeFile(path, content);
+        }
 
 
         return true;

@@ -25,6 +25,15 @@ public class NameStringUtils {
         return String.valueOf(ch);
     }
 
+    /**
+     * 类名转属性名
+     */
+    public static String classNameToPropertyName(String name) {
+        char[] ch = name.toCharArray();
+        ch[0] = Character.toLowerCase(ch[0]);
+        return String.valueOf(ch);
+    }
+
     public static String toDBColumnName(String name) {
         return reverseCamelLowerCase(name);
     }
