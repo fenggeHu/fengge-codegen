@@ -1,5 +1,8 @@
 package ${mapperPackage};
 
+//import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import hu.jinfeng.mybatis.provider.GeneralProvider;
+import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.*;
 import ${entityPackage}.${entityClassName};
@@ -8,7 +11,7 @@ import ${entityPackage}.${entityClassName};
  * ${tableInfo.name} - ${tableInfo.remarks}
  **/
 @Mapper
-public interface ${entityClassName}Mapper {
+public interface ${entityClassName}Mapper /** extends BaseMapper<${entityClassName}>*/ {
 
     @InsertProvider(type = GeneralProvider.class, method = "insertSQL")
     @Options(useGeneratedKeys = true)
