@@ -1,0 +1,28 @@
+package ${mapperPackage};
+
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.*;
+import ${entityPackage}.${entityClassName};
+
+/**
+ * ${tableInfo.name} - ${tableInfo.remarks}
+ **/
+@Mapper
+public interface ${entityClassName}Mapper {
+    #set($fin=0)
+    #if("$!{tableInfo.autoIncrementField}"!="")
+    @Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns)#if($col.autoIncrement) #if(${foreach.index}==0)#set($fin = $fin + 1) #end #else #if(${foreach.index}!=$fin),#end `${col.name}`#end #end )" +
+    "VALUES(#foreach($col in $tableInfo.columns) #if($col.autoIncrement) #if(${foreach.index}==0)#set($fin = $fin + 1) #end #else #if(${foreach.index}!=$fin),#end #{$_nameString.toPropertyName("${col.name}")} #end #end )")
+    @Options(useGeneratedKeys = true)
+    long insert(${entityClassName} entity);
+    #else
+    @Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns) `${col.name}`#if(${foreach.index}!=0),#end #end )" +
+    "VALUES(#foreach($col in $tableInfo.columns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.index}!=0),#end #end )")
+    void insert(${entityClassName} entity);
+    #end
+
+    int update(${entityClassName} entity);
+
+    @Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
+    ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
+}
