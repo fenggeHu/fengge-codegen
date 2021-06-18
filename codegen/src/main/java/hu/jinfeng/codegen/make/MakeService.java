@@ -20,7 +20,7 @@ public class MakeService {
 
     private String getBaseClassName(String tableName) {
         if (StringUtils.isNotBlank(makeCodeConfiguration.getTablePrefixRemove())
-                && tableName.startsWith(makeCodeConfiguration.getTablePrefixRemove())) {
+                && tableName.toLowerCase().startsWith(makeCodeConfiguration.getTablePrefixRemove().toLowerCase())) {
             return tableName.substring(makeCodeConfiguration.getTablePrefixRemove().length());
         }
         return tableName;
@@ -29,7 +29,7 @@ public class MakeService {
     public boolean execute(MakeContext makeContext) {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
-        String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName()));
+        String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
         vmContext.put("entityClassName", entityClassName);
         //1，生产entity对象
         if (null != makeContext.getEntityPackage()) {

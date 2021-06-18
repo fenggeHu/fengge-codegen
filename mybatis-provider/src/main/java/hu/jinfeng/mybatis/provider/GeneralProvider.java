@@ -2,6 +2,7 @@ package hu.jinfeng.mybatis.provider;
 
 import hu.jinfeng.commons.utils.NameStringUtils;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.lang.reflect.Field;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @Author hujinfeng  @Date 2020/11/27
  **/
+@Slf4j
 public class GeneralProvider {
     private static final Map<Class<?>, EntityInfo> ENTITY_INFO_MAP = new ConcurrentHashMap<>();
 //    private static final Map<Class<?>, QueryInfo> QUERY_INFO_MAP = new ConcurrentHashMap<>();
@@ -32,8 +34,9 @@ public class GeneralProvider {
                 sql.VALUES(fieldInfo.dbFieldName, String.format("#{%s}", fieldInfo.fieldName));
             }
         }
-
-        return sql.toString();
+        String ss = sql.toString();
+        log.debug(ss);
+        return ss;
     }
 
     public String updateSQL(Object object) {
@@ -55,7 +58,9 @@ public class GeneralProvider {
         }
         sql.WHERE(String.format("%s = #{%s}", entityInfo.primaryKeyField.dbFieldName, entityInfo.primaryKeyField.fieldName));
 
-        return sql.toString();
+        String ss = sql.toString();
+        log.debug(ss);
+        return ss;
     }
 
 //    public String querySQL(Object object) {

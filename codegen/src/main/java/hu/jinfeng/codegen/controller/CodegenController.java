@@ -1,8 +1,8 @@
 package hu.jinfeng.codegen.controller;
 
 import com.google.gson.Gson;
-import hu.jinfeng.codegen.db.DBHelper;
-import hu.jinfeng.codegen.db.TableInfo;
+import hu.jinfeng.codegen.model.DBHelper;
+import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.codegen.make.MakeContext;
 import hu.jinfeng.codegen.make.MakeService;
 import io.swagger.annotations.*;

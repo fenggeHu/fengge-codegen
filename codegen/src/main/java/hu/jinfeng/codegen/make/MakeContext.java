@@ -1,6 +1,6 @@
 package hu.jinfeng.codegen.make;
 
-import hu.jinfeng.codegen.db.TableInfo;
+import hu.jinfeng.codegen.model.TableInfo;
 import lombok.Data;
 
 import java.util.HashMap;
