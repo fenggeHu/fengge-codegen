@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Options;
 #end
 import org.apache.ibatis.annotations.*;
 import ${entityPackage}.${entityClassName};
+import java.util.List;
 
 /**
  * ${tableInfo.name} - ${tableInfo.remarks}
@@ -22,6 +23,16 @@ public interface ${entityClassName}Mapper {
     "VALUES(#foreach($col in $tableInfo.columns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.index}!=0),#end#end)")
     void insert(${entityClassName} entity);
     #end
+    /** 批量插入 */
+    #set($fin=0)
+    #set($fin2=0)
+@Insert("<script> " +
+"INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end) VALUES " +
+"<foreach collection ='entities' item='item' separator =','>" +
+"(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)" +
+"</foreach>" +
+"</script>")
+void insertBatch(List<${entityClassName}> entities);
 #set($inx=0)
 @Update({"<script>",
 "UPDATE ${tableInfo.name} SET#foreach($col in $tableInfo.columns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}#end#end " +
