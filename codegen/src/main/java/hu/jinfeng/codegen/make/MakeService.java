@@ -44,14 +44,14 @@ public class MakeService {
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }
-        //2, 生成mapper对象
+        //2, 生成mapper
         if (null != makeContext.getMapperPackage()) {
             String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/mapper.vm");
             if(null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
-                FileUtils.writeFile(path, new Formatter().formatSource(content));
+                FileUtils.writeFile(path, new Formatter().formatSource(content.replace("  "," ").replace("  "," ")));
             }
         }
         //3, 生成service
