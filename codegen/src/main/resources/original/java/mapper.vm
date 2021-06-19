@@ -1,6 +1,7 @@
 package ${mapperPackage};
-
+#if("$!{tableInfo.autoIncrementField}"!="")
 import org.apache.ibatis.annotations.Options;
+#end
 import org.apache.ibatis.annotations.*;
 import ${entityPackage}.${entityClassName};
 
@@ -10,17 +11,22 @@ import ${entityPackage}.${entityClassName};
 @Mapper
 public interface ${entityClassName}Mapper {
     #set($fin=0)
+    #set($fin2=0)
     #if("$!{tableInfo.autoIncrementField}"!="")
-    @Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns)#if($col.autoIncrement) #if(${foreach.index}==0)#set($fin = $fin + 1) #end #else #if(${foreach.index}!=$fin),#end `${col.name}`#end #end )" +
-    "VALUES(#foreach($col in $tableInfo.columns) #if($col.autoIncrement) #if(${foreach.index}==0)#set($fin = $fin + 1) #end #else #if(${foreach.index}!=$fin),#end #{$_nameString.toPropertyName("${col.name}")} #end #end )")
+@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end)" +
+    "VALUES(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)")
     @Options(useGeneratedKeys = true)
     long insert(${entityClassName} entity);
     #else
-    @Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns) `${col.name}`#if(${foreach.index}!=0),#end #end )" +
-    "VALUES(#foreach($col in $tableInfo.columns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.index}!=0),#end #end )")
+@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns) `${col.name}`#if(${foreach.index}!=0),#end#end)" +
+    "VALUES(#foreach($col in $tableInfo.columns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.index}!=0),#end#end)")
     void insert(${entityClassName} entity);
     #end
-
+#set($inx=0)
+@Update({"<script>",
+"UPDATE ${tableInfo.name} SET#foreach($col in $tableInfo.columns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}#end#end " +
+"WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end",
+    "</script>" })
     int update(${entityClassName} entity);
 
     @Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")

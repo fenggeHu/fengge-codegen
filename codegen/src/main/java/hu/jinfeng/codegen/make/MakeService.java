@@ -1,9 +1,11 @@
 package hu.jinfeng.codegen.make;
 
+import com.google.googlejavaformat.java.Formatter;
 import hu.jinfeng.codegen.config.MakeCodeConfiguration;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
 import hu.jinfeng.commons.utils.VelocityEngineUtils;
+import lombok.SneakyThrows;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class MakeService {
         return tableName;
     }
 
+    @SneakyThrows
     public boolean execute(MakeContext makeContext) {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
@@ -38,7 +41,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getEntityPackage()) + "/" + entityClassName + ".java";
-                FileUtils.writeFile(path, content);
+                FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }
         //2, 生成mapper对象
@@ -48,7 +51,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
-                FileUtils.writeFile(path, content);
+                FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }
         //3, 生成service
@@ -58,7 +61,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getServicePackage()) + "/" + entityClassName + "Service.java";
-                FileUtils.writeFile(path, content);
+                FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }
 
