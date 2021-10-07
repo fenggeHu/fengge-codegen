@@ -44,6 +44,18 @@ public class MakeService {
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }
+
+        // 生成query - 超过1个索引字段才生成
+        if (null != makeContext.getQueryPackage() && makeContext.getTableInfo().getIndexColumns().size() > 1) {
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/query.vm");
+            if (null != vm) {
+                String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
+                String path = makeCodeConfiguration.getCodeOutputPath() +
+                        FileUtils.package2Path(makeContext.getQueryPackage()) + "/" + entityClassName + "Query.java";
+                FileUtils.writeFile(path, new Formatter().formatSource(content));
+            }
+        }
+
         //2, 生成mapper
         if (null != makeContext.getMapperPackage()) {
             String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/mapper.vm");
@@ -60,7 +72,7 @@ public class MakeService {
         }
         //3, 生成service
         if (null != makeContext.getServicePackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/service.vm");
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/service.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +

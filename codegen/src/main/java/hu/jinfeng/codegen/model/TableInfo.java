@@ -17,7 +17,9 @@ public class TableInfo {
     private String remarks;
 
     private String database;
-
+    /**
+     * 所有字段
+     */
     private List<ColumnInfo> columns;
 
     /**
@@ -28,6 +30,10 @@ public class TableInfo {
      * update sql
      */
     private List<ColumnInfo> updateColumns;
+    /**
+     * index columns
+     */
+    private List<ColumnInfo> indexColumns = new LinkedList<>();
 
     /**
      * 主键字段 - pk可能有多个联合
@@ -43,7 +49,6 @@ public class TableInfo {
                 }
             }
         }
-
         return false;
     }
 
@@ -58,5 +63,29 @@ public class TableInfo {
         }
 
         return null;
+    }
+
+    /**
+     * 字段名查字段信息
+     */
+    public ColumnInfo getColumnInfo(String colName) {
+        if(CollectionUtils.isEmpty(columns)) return null;
+        for (ColumnInfo columnInfo : columns) {
+            if(columnInfo.getName().equalsIgnoreCase(colName)) {
+                return columnInfo;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasDateTypeOfIndex() {
+        if (null != indexColumns) {
+            for (ColumnInfo columnInfo : indexColumns) {
+                if ("Date".equalsIgnoreCase(columnInfo.getJavaType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

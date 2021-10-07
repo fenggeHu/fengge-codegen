@@ -40,6 +40,8 @@ void insertBatch(List<${entityClassName}> entities);
     "</script>" })
     int update(${entityClassName} entity);
 
-    @Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
-    ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
+@Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
+${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
+
+
 }

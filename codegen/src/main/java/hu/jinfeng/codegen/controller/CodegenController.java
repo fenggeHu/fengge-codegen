@@ -63,6 +63,7 @@ public class CodegenController {
         Arrays.stream(tables).forEach(e -> {
             MakeContext makeContext = new MakeContext();
             makeContext.setBasePackage(basePackage);
+            makeContext.setQueryPackage(basePackage + ".query");
             makeContext.setEntityPackage(basePackage + ".entity");
             makeContext.setMapperPackage(basePackage + ".mapper");
             makeContext.setServicePackage(basePackage + ".service");

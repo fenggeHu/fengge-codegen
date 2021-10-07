@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -155,6 +152,12 @@ public class DBHelper {
         ResultSet columns = metaData.getColumns(database, "%", tableName, "%");
         this.fillColumns(table, columns);
 
+        ResultSet index = metaData.getIndexInfo(database, "%", tableName, false, false);
+        while (index.next()){
+            String colName = index.getString("COLUMN_NAME");
+            ColumnInfo columnInfo = table.getColumnInfo(colName);
+            table.getIndexColumns().add(columnInfo);
+        }
         return table;
     }
 

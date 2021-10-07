@@ -1,0 +1,21 @@
+package ${entityPackage};
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+#if($tableInfo.hasDateTypeOfIndex())
+import java.util.Date;
+#end
+
+@Data
+public class ${entityClassName}Query {
+    #foreach($col in $tableInfo.indexColumns)
+    /**
+        * $!col.remarks
+        */
+    #if("" != "$!col.remarks")
+    @ApiModelProperty("$!col.remarks")
+    #end
+    private $col.javaType $_nameString.toPropertyName("${col.name}");
+
+    #end
+}
