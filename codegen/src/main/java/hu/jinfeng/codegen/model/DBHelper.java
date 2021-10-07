@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author hujinfeng  @Date 2020/11/27
@@ -152,12 +153,14 @@ public class DBHelper {
         ResultSet columns = metaData.getColumns(database, "%", tableName, "%");
         this.fillColumns(table, columns);
 
+        List<ColumnInfo> indexColumns = new LinkedList<>();
         ResultSet index = metaData.getIndexInfo(database, "%", tableName, false, false);
         while (index.next()){
             String colName = index.getString("COLUMN_NAME");
             ColumnInfo columnInfo = table.getColumnInfo(colName);
-            table.getIndexColumns().add(columnInfo);
+            indexColumns.add(columnInfo);
         }
+        table.getIndexColumns().addAll(indexColumns.stream().distinct().collect(Collectors.toList()));
         return table;
     }
 

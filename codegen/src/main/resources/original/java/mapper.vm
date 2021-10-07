@@ -4,6 +4,9 @@ import org.apache.ibatis.annotations.Options;
 #end
 import org.apache.ibatis.annotations.*;
 import ${entityPackage}.${entityClassName};
+#if($tableInfo.indexColumns.size() >1)
+import ${queryPackage}.${entityClassName}Query;
+#end
 import java.util.List;
 
 /**
@@ -43,5 +46,14 @@ void insertBatch(List<${entityClassName}> entities);
 @Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
 ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
 
+#if($tableInfo.indexColumns.size() >1)
+@Select({"<script>",
+"SELECT * FROM ${tableInfo.name} <WHERE> " +
+#foreach($col in $tableInfo.indexColumns) 
+    "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
+ #end
+    ,"</WHERE></script>" })
+List<${entityClassName}> query(${entityClassName}Query query);
+#end
 
 }
