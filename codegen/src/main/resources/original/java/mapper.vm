@@ -52,8 +52,17 @@ ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns
 #foreach($col in $tableInfo.indexColumns) 
     "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
  #end
-    "</script>" })
+    " LIMIT 1000</script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
+
+@Select({"<script>",
+"SELECT * FROM ${tableInfo.name} WHERE 1=1 " +
+#foreach($col in $tableInfo.indexColumns) 
+    "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
+ #end
+    " LIMIT #{pager.startRow}, #{pager.pageSize}" +
+    "</script>" })
+List<${entityClassName}> queryWithPaging(${entityClassName}Query query);
 #end
 
 }

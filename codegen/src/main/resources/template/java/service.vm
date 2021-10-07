@@ -2,18 +2,29 @@ package ${servicePackage};
 
 #set($mapperClassName = "${entityClassName}Mapper")
 #set($serviceClassName = "${entityClassName}Service")
+import ${entityPackage}.${entityClassName};
+import ${queryPackage}.${entityClassName}Query;
 import ${mapperPackage}.${mapperClassName};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import hu.jinfeng.middleware.commons.data.Pager;
+import java.util.List;
 
 /**
  * CRUD - ${tableInfo.remarks}
  **/
 @Service
 public class ${serviceClassName} {
-
+    #set($mapper = $_nameString.classNameToPropertyName(${mapperClassName}))
     @Autowired
-    private $mapperClassName $_nameString.classNameToPropertyName(${mapperClassName});
+    private $mapperClassName $mapper;
 
-
+    /**
+     * 分页查询
+     **/
+    public List<${entityClassName}> queryWithPaging(${entityClassName}Query query, int pageNum, int pageSize) {
+        Pager pager = Pager.getPager(pageNum, pageSize);
+        query.setPager(pager);
+        return ${mapper}.queryWithPaging(query);
+    }
 }

@@ -1,5 +1,6 @@
 package ${entityPackage};
 
+import hu.jinfeng.middleware.commons.data.Pager;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 #if($tableInfo.hasDateTypeOfIndex())
@@ -18,4 +19,9 @@ public class ${entityClassName}Query {
     private $col.javaType $_nameString.toPropertyName("${col.name}");
 
     #end
+    /**
+   * 分页
+   */
+   @ApiModelProperty("分页查询参数")
+  private Pager pager;
 }
