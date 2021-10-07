@@ -21,6 +21,15 @@ public class TableInfo {
     private List<ColumnInfo> columns;
 
     /**
+     * insert sql
+     */
+    private List<ColumnInfo> insertColumns;
+    /**
+     * update sql
+     */
+    private List<ColumnInfo> updateColumns;
+
+    /**
      * 主键字段 - pk可能有多个联合
      **/
     List<String> pkNames = new LinkedList<>();

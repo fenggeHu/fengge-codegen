@@ -1,7 +1,10 @@
 package hu.jinfeng.codegen.model;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import hu.jinfeng.codegen.config.MakeCodeConfiguration;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,6 +34,8 @@ public class DBHelper {
     private String username;
     @Value("${spring.datasource.password}")
     private String password;
+    @Autowired
+    private MakeCodeConfiguration makeCodeConfiguration;
 
     private DruidDataSource dataSource = null;
 
@@ -61,7 +67,11 @@ public class DBHelper {
 
     private void fillColumns(final TableInfo table, ResultSet columns) throws SQLException {
         List<ColumnInfo> fields = new ArrayList<>();
+        List<ColumnInfo> insertFields = new ArrayList<>();
+        List<ColumnInfo> updateFields = new ArrayList<>();
         table.setColumns(fields);
+        table.setInsertColumns(insertFields);
+        table.setUpdateColumns(updateFields);
         while (columns.next()) {
             ColumnInfo columnInfo = new ColumnInfo();
             columnInfo.setDbType(dataSource.getDbType());
@@ -94,10 +104,37 @@ public class DBHelper {
                 table.getPkColumns().add(columnInfo);
             }
             fields.add(columnInfo);
+            //insert
+            if (makeCodeConfiguration.getInsertExclude() == null) {
+                insertFields.add(columnInfo);
+            } else {
+                boolean exc = false;
+                for (String exclude : makeCodeConfiguration.getInsertExclude()) {
+                    if (exclude.equalsIgnoreCase(columnInfo.getName())) {
+                        exc = true;
+                        break;
+                    }
+                }
+                if (!exc) insertFields.add(columnInfo);
+            }
+            //update
+            if (makeCodeConfiguration.getUpdateExclude() == null) {
+                updateFields.add(columnInfo);
+            } else {
+                boolean exc = false;
+                for (String exclude : makeCodeConfiguration.getUpdateExclude()) {
+                    if (exclude.equalsIgnoreCase(columnInfo.getName())) {
+                        exc = true;
+                        break;
+                    }
+                }
+                if (!exc) updateFields.add(columnInfo);
+            }
         }
     }
 
-    public TableInfo getTableInfo(String database, String tableName) throws Exception {
+    @SneakyThrows
+    public TableInfo getTableInfo(String database, String tableName) {
         DatabaseMetaData metaData = getDatabaseMetaData();
         if (null == database) {
             database = metaData.getConnection().getCatalog();
@@ -111,7 +148,7 @@ public class DBHelper {
         table.setRemarks(tableInfo.getString("REMARKS"));
 
         ResultSet pkRS = metaData.getPrimaryKeys(database, null, tableName);
-        while(pkRS.next()) {
+        while (pkRS.next()) {
             table.getPkNames().add(pkRS.getString("COLUMN_NAME"));
         }
 

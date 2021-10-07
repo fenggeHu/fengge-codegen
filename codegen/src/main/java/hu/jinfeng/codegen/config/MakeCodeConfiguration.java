@@ -16,12 +16,22 @@ public class MakeCodeConfiguration {
     /**
      * 生成代码的类名删除表前缀
      */
-    @Value("${fengge.code.table.prefix.remove}")
+    @Value("${table.prefix.remove}")
     private String tablePrefixRemove;
     /**
      * 生成代码输出目录
      */
-    @Value("${fengge.code.output.path}")
+    @Value("${output.path}")
     private String codeOutputPath;
+    /**
+     * insert语句排除字段
+     */
+    @Value("${mapper.insert.exclude}")
+    private String[] insertExclude;
+    /**
+     * update语句排除字段
+     */
+    @Value("${mapper.update.exclude}")
+    private String[] updateExclude;
 
 }

@@ -8,7 +8,7 @@ import java.util.Date;
 #end
 
 @Data
-@ApiModel("${tableInfo.remarks}")
+@ApiModel("${tableInfo.name}")
 public class ${entityClassName} {
     #foreach($col in $tableInfo.columns)
     /**

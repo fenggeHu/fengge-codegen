@@ -14,12 +14,12 @@ public interface ${entityClassName}Mapper {
     #set($fin=0)
     #set($fin2=0)
     #if("$!{tableInfo.autoIncrementField}"!="")
-@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end)" +
+@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end)" +
     "VALUES(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)")
     @Options(useGeneratedKeys = true)
     long insert(${entityClassName} entity);
     #else
-@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns) `${col.name}`#if(${foreach.index}!=0),#end#end)" +
+@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns) `${col.name}`#if(${foreach.index}!=0),#end#end)" +
     "VALUES(#foreach($col in $tableInfo.columns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.index}!=0),#end#end)")
     void insert(${entityClassName} entity);
     #end
@@ -27,7 +27,7 @@ public interface ${entityClassName}Mapper {
     #set($fin=0)
     #set($fin2=0)
 @Insert("<script> " +
-"INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end) VALUES " +
+"INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end) VALUES " +
 "<foreach collection ='entities' item='item' separator =','>" +
 "(#foreach($col in $tableInfo.columns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)" +
 "</foreach>" +
@@ -35,7 +35,7 @@ public interface ${entityClassName}Mapper {
 void insertBatch(List<${entityClassName}> entities);
 #set($inx=0)
 @Update({"<script>",
-"UPDATE ${tableInfo.name} SET#foreach($col in $tableInfo.columns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}#end#end " +
+"UPDATE ${tableInfo.name} SET#foreach($col in $tableInfo.updateColumns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}#end#end " +
 "WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end",
     "</script>" })
     int update(${entityClassName} entity);
