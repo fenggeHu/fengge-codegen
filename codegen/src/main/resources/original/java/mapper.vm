@@ -43,6 +43,22 @@ void insertBatch(List<${entityClassName}> entities);
     "</script>" })
     int update(${entityClassName} entity);
 
+@Update({"<script>",
+"UPDATE ${tableInfo.name} SET "+
+#foreach($pkName in $tableInfo.pkNames)
+#if(${foreach.index}==0)
+"`$pkName` = #{$_nameString.toPropertyName(${pkName})}" +
+#end
+#end
+#foreach($col in $tableInfo.updateColumns)
+    #if(!$tableInfo.pkNames.contains(${col.name}))
+        "<if test='$_nameString.toPropertyName(${col.name})!=null'>, `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}</if>"+ 
+    #end
+#end
+" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end",
+    "</script>" })
+    int updateSelective(${entityClassName} entity);
+
 @Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
 ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
 

@@ -19,9 +19,12 @@ public class ${entityClassName}Query {
     private $col.javaType $_nameString.toPropertyName("${col.name}");
 
     #end
+    
+  #if($tableInfo.indexColumns.size() >1)
     /**
    * 分页
    */
    @ApiModelProperty("分页查询参数")
   private Pager pager;
+  #end
 }

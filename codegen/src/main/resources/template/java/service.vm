@@ -3,7 +3,9 @@ package ${servicePackage};
 #set($mapperClassName = "${entityClassName}Mapper")
 #set($serviceClassName = "${entityClassName}Service")
 import ${entityPackage}.${entityClassName};
+#if($tableInfo.indexColumns.size() >1)
 import ${queryPackage}.${entityClassName}Query;
+#end
 import ${mapperPackage}.${mapperClassName};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import java.util.List;
 
 /**
  * CRUD - ${tableInfo.remarks}
+ * 代理一层mapper 
  **/
 @Service
 public class ${serviceClassName} {
@@ -19,6 +22,42 @@ public class ${serviceClassName} {
     @Autowired
     private $mapperClassName $mapper;
 
+/**
+* 插入
+**/
+  public void insert(${entityClassName} entity) {
+    ${mapper}.insert(entity);
+  }
+
+    /**
+     * 批量插入
+     */
+    public void insertBatch(List<${entityClassName}> entities) {
+        ${mapper}.insertBatch(entities);
+    }
+
+    /**
+     * 更新记录 - 所有字段
+     */
+    public int update(${entityClassName} entity) {
+        return ${mapper}.update(entity);
+    }
+
+    /**
+    * 更新有值的字段
+    */
+    public int updateSelective(${entityClassName} entity) {
+        return ${mapper}.updateSelective(entity);
+    }
+
+    /**
+     * PrimaryKey查询
+     */
+    public ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end){
+        return ${mapper}.selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end $_nameString.toPropertyName(${pkColumn.name}) #end);
+    }
+
+#if($tableInfo.indexColumns.size() >1)
     /**
      * 分页查询
      **/
@@ -27,4 +66,5 @@ public class ${serviceClassName} {
         query.setPager(pager);
         return ${mapper}.queryWithPaging(query);
     }
+#end
 }
