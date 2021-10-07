@@ -52,7 +52,8 @@ ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns
 #foreach($col in $tableInfo.indexColumns) 
     "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
  #end
-    ,"</WHERE></script>" })
+    "</WHERE>"
+    ,"</script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
 #end
 
