@@ -48,12 +48,11 @@ ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns
 
 #if($tableInfo.indexColumns.size() >1)
 @Select({"<script>",
-"SELECT * FROM ${tableInfo.name} <WHERE> " +
+"SELECT * FROM ${tableInfo.name} WHERE 1=1 " +
 #foreach($col in $tableInfo.indexColumns) 
     "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
  #end
-    "</WHERE>"
-    ,"</script>" })
+    "</script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
 #end
 
