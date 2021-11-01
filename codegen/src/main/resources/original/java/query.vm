@@ -1,6 +1,6 @@
 package ${entityPackage};
 
-import hu.jinfeng.middleware.commons.data.Pager;
+import plugin.Pager;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 #if($tableInfo.hasDateTypeOfIndex())

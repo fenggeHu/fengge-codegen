@@ -9,7 +9,7 @@ import ${queryPackage}.${entityClassName}Query;
 import ${mapperPackage}.${mapperClassName};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import hu.jinfeng.middleware.commons.data.Pager;
+import plugin.Pager;
 import java.util.List;
 
 /**
