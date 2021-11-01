@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * CRUD - ${tableInfo.remarks}
- * 代理一层mapper 
+ * 代理一层mapper (可修改或删除)
  **/
 @Service
 public class ${serviceClassName} {
