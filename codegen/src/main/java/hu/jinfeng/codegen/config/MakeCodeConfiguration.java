@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * @Author hujinfeng  @Date 2021/3/10
  **/
@@ -34,4 +38,9 @@ public class MakeCodeConfiguration {
     @Value("${mapper.update.exclude}")
     private String[] updateExclude;
 
+    public String getCodeOutputPath() {
+        String resource = this.getClass().getResource("/").getPath();
+        String root = Paths.get(resource).getParent().getParent().getParent().toString();
+        return root + codeOutputPath;
+    }
 }
