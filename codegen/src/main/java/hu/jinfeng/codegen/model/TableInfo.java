@@ -40,6 +40,11 @@ public class TableInfo {
      **/
     List<String> pkNames = new LinkedList<>();
     List<ColumnInfo> pkColumns = new LinkedList<>();
+    /**
+     * unique字段 - uk可能有多个联合
+     **/
+    List<String> ukNames = new LinkedList<>();
+    List<ColumnInfo> ukColumns = new LinkedList<>();
 
     public boolean hasDateType() {
         if (null != columns) {

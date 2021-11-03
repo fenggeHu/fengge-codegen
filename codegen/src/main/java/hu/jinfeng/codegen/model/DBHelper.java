@@ -97,9 +97,13 @@ public class DBHelper {
             System.out.println(columns.getString("SCOPE_TABLE"));
             System.out.println(columns.getString("SOURCE_DATA_TYPE"));
             System.out.println(columns.getString("IS_GENERATEDCOLUMN"));
-
+            // pk
             if (table.getPkNames().contains(columnInfo.getName())) {
                 table.getPkColumns().add(columnInfo);
+            }
+            // uk
+            if (table.getUkNames().contains(columnInfo.getName())) {
+                table.getUkColumns().add(columnInfo);
             }
             fields.add(columnInfo);
             //insert
@@ -148,6 +152,13 @@ public class DBHelper {
         ResultSet pkRS = metaData.getPrimaryKeys(database, null, tableName);
         while (pkRS.next()) {
             table.getPkNames().add(pkRS.getString("COLUMN_NAME"));
+        }
+
+        ResultSet ukRs = metaData.getIndexInfo(database, null, tableName, true, false);
+        while (ukRs.next()) {
+            String cn = ukRs.getString("COLUMN_NAME");
+            if(table.getPkNames().contains(cn)) continue;
+            table.getUkNames().add(cn);
         }
 
         ResultSet columns = metaData.getColumns(database, "%", tableName, "%");
