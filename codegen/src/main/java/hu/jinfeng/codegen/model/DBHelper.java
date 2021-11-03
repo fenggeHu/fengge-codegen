@@ -38,8 +38,7 @@ public class DBHelper {
     private DruidDataSource dataSource = null;
 
     public DatabaseMetaData getDatabaseMetaData() throws Exception {
-        DatabaseMetaData metaData = getConnection().getMetaData();
-        return metaData;
+        return getConnection().getMetaData();
     }
 
     public List<TableInfo> getAllTables(String database) throws Exception {
@@ -82,21 +81,20 @@ public class DBHelper {
             //供参考：null \ CURRENT_TIMESTAMP \0
             columnInfo.setDefaultValue(columns.getString("COLUMN_DEF"));
 
-            System.out.println("=========>>>>>>" + columns.getString("COLUMN_NAME"));
-            System.out.println(columns.getObject("DATA_TYPE"));
-            System.out.println(columns.getString("TABLE_CAT"));
-            System.out.println(columns.getString("TYPE_NAME"));
-            System.out.println(columns.getString("BUFFER_LENGTH"));
-            System.out.println(columns.getString("DECIMAL_DIGITS"));
-            System.out.println(columns.getString("NUM_PREC_RADIX"));
-            System.out.println("NULLABLE: " + columns.getString("NULLABLE"));
-            System.out.println(columns.getString("COLUMN_DEF"));
-            System.out.println(columns.getString("SQL_DATA_TYPE"));
-            System.out.println(columns.getString("SQL_DATETIME_SUB"));
-            System.out.println("IS_NULLABLE: " + columns.getString("IS_NULLABLE"));
-            System.out.println(columns.getString("SCOPE_TABLE"));
-            System.out.println(columns.getString("SOURCE_DATA_TYPE"));
-            System.out.println(columns.getString("IS_GENERATEDCOLUMN"));
+//            System.out.println(columns.getObject("DATA_TYPE"));
+//            System.out.println(columns.getString("TABLE_CAT"));
+//            System.out.println(columns.getString("TYPE_NAME"));
+//            System.out.println(columns.getString("BUFFER_LENGTH"));
+//            System.out.println(columns.getString("DECIMAL_DIGITS"));
+//            System.out.println(columns.getString("NUM_PREC_RADIX"));
+//            System.out.println("NULLABLE: " + columns.getString("NULLABLE"));
+//            System.out.println(columns.getString("COLUMN_DEF"));
+//            System.out.println(columns.getString("SQL_DATA_TYPE"));
+//            System.out.println(columns.getString("SQL_DATETIME_SUB"));
+//            System.out.println("IS_NULLABLE: " + columns.getString("IS_NULLABLE"));
+//            System.out.println(columns.getString("SCOPE_TABLE"));
+//            System.out.println(columns.getString("SOURCE_DATA_TYPE"));
+//            System.out.println(columns.getString("IS_GENERATEDCOLUMN"));
             // pk
             if (table.getPkNames().contains(columnInfo.getName())) {
                 table.getPkColumns().add(columnInfo);
