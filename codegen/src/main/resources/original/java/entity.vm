@@ -2,12 +2,14 @@ package ${entityPackage};
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 #if($tableInfo.hasDateType())
 import java.util.Date;
 #end
 
 @Data
+@Builder
 @ApiModel("${tableInfo.name}")
 public class ${entityClassName} {
     #foreach($col in $tableInfo.columns)

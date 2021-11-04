@@ -1,7 +1,4 @@
 package ${mapperPackage};
-#if("$!{tableInfo.autoIncrementField}"!="")
-import org.apache.ibatis.annotations.Options;
-#end
 import org.apache.ibatis.annotations.*;
 import ${entityPackage}.${entityClassName};
 #if($tableInfo.indexColumns.size() >1)
