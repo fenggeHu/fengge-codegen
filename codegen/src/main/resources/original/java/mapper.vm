@@ -14,13 +14,13 @@ public interface ${entityClassName}Mapper {
     #set($fin=0)
     #set($fin2=0)
     #if("$!{tableInfo.autoIncrementField}"!="")
-@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end)" +
+@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement) #if($fin>0),#else #set($fin = 1) #end `${col.name}`#end#end)" +
     "VALUES(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)")
     @Options(useGeneratedKeys = true)
     long insert(${entityClassName} entity);
     #else
-@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns) `${col.name}`#if(${foreach.index}!=0),#end#end)" +
-    "VALUES(#foreach($col in $tableInfo.insertColumns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.index}!=0),#end#end)")
+@Insert("INSERT INTO ${tableInfo.name}(#foreach($col in $tableInfo.insertColumns) `${col.name}`#if(${foreach.count}>0),#end#end)" +
+    "VALUES(#foreach($col in $tableInfo.insertColumns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.count}>0),#end#end)")
     void insert(${entityClassName} entity);
     #end
     /** 批量插入 */

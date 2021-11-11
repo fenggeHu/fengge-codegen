@@ -2,12 +2,14 @@ package ${entityPackage};
 
 import plugin.Pager;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 #if($tableInfo.hasDateTypeOfIndex())
 import java.util.Date;
 #end
 
 @Data
+@Builder
 public class ${entityClassName}Query {
     #foreach($col in $tableInfo.indexColumns)
     /**
