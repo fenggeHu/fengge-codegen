@@ -62,6 +62,15 @@ void insertBatch(List<${entityClassName}> entities);
 #if($tableInfo.pkColumns.size() > 0)
 @Select("SELECT * FROM ${tableInfo.name} WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0) AND #end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
 ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
+
+@Select({"<script>",
+    "SELECT * FROM ${tableInfo.name} WHERE id in ",
+    "<foreach collection='ids' item='item' index='index' open='(' separator=',' close=')'>",
+        "#{item}",
+    "</foreach>",
+    "</script>"
+})
+List<${entityClassName}> selectByIds(@Param("ids") Collection<Long> ids);
 #end
 
 #if($tableInfo.ukColumns.size() > 0)
