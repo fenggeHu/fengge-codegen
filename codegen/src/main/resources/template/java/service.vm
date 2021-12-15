@@ -61,9 +61,8 @@ public class ${serviceClassName} {
     /**
      * 分页查询
      **/
-    public List<${entityClassName}> queryWithPaging(${entityClassName}Query query, int pageNum, int pageSize) {
-        Pager pager = Pager.getPager(pageNum, pageSize);
-        query.setPager(pager);
+    public List<${entityClassName}> queryWithPaging(${entityClassName}Query query) {
+        query.getPager().calculateStartAndEndRow();
         return ${mapper}.queryWithPaging(query);
     }
 #end

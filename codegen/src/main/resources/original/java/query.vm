@@ -28,5 +28,12 @@ public class ${entityClassName}Query {
    */
    @ApiModelProperty("分页查询参数")
   private Pager pager;
+
+  public Pager getPager(){
+    if(null == pager) {
+        pager = Pager.defaultPager();
+    }
+    return pager;
+  }
   #end
 }
