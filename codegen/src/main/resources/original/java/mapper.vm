@@ -4,6 +4,7 @@ import ${entityPackage}.${entityClassName};
 #if($tableInfo.indexColumns.size() >1)
 import ${queryPackage}.${entityClassName}Query;
 #end
+import java.util.Collection;
 import java.util.List;
 
 /**
