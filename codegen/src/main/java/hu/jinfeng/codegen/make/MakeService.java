@@ -71,12 +71,12 @@ public class MakeService {
             }
         }
         //3, 生成service
-        if (null != makeContext.getServicePackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/service.vm");
+        if (null != makeContext.getRepositoryPackage()) {
+            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/repository.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
-                        FileUtils.package2Path(makeContext.getServicePackage()) + "/" + entityClassName + "Service.java";
+                        FileUtils.package2Path(makeContext.getRepositoryPackage()) + "/" + entityClassName + "Repository.java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }

@@ -24,7 +24,7 @@ public class MakeContext {
 
     private String mapperPackage;
 
-    private String servicePackage;
+    private String repositoryPackage;
 
     private String controllerPackage;
     /**
@@ -40,7 +40,7 @@ public class MakeContext {
         result.put("entityPackage", this.getEntityPackage());
         result.put("queryPackage", this.getQueryPackage());
         result.put("mapperPackage", this.getMapperPackage());
-        result.put("servicePackage", this.getServicePackage());
+        result.put("repositoryPackage", this.getRepositoryPackage());
         result.put("controllerPackage", this.getControllerPackage());
 
         return result;

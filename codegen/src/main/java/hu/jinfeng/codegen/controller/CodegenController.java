@@ -40,7 +40,7 @@ public class CodegenController {
             makeContext.setQueryPackage(basePackage + ".query");
             makeContext.setEntityPackage(basePackage + ".entity");
             makeContext.setMapperPackage(basePackage + ".mapper");
-            makeContext.setServicePackage(basePackage + ".repository");
+            makeContext.setRepositoryPackage(basePackage + ".repository");
             makeContext.setControllerPackage(basePackage + ".controller");
             makeContext.setTableInfo(dbHelper.getTableInfo(database, e));
             makeService.execute(makeContext);

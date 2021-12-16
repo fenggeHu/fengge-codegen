@@ -1,14 +1,14 @@
-package ${servicePackage};
+package ${repositoryPackage};
 
 #set($mapperClassName = "${entityClassName}Mapper")
-#set($serviceClassName = "${entityClassName}Service")
+#set($repositoryClassName = "${entityClassName}Repository")
 import ${entityPackage}.${entityClassName};
 #if($tableInfo.indexColumns.size() >1)
 import ${queryPackage}.${entityClassName}Query;
 #end
 import ${mapperPackage}.${mapperClassName};
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import plugin.Pager;
 import java.util.List;
 
@@ -16,8 +16,8 @@ import java.util.List;
  * CRUD - ${tableInfo.remarks}
  * 代理一层mapper (可修改或删除)
  **/
-@Service
-public class ${serviceClassName} {
+@Component
+public class ${repositoryClassName} {
     #set($mapper = $_nameString.classNameToPropertyName(${mapperClassName}))
     @Autowired
     private $mapperClassName $mapper;
