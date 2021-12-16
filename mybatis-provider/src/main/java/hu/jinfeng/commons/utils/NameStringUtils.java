@@ -6,7 +6,7 @@ package hu.jinfeng.commons.utils;
 public class NameStringUtils {
 
     /**
-     * 属性命名
+     * 属性命名 - 首字母小写
      */
     public static String toPropertyName(String name) {
         String camel = toCamelCase(name);
@@ -16,7 +16,7 @@ public class NameStringUtils {
     }
 
     /**
-     * 类名
+     * 类名 - 首字母大写
      */
     public static String toClassName(String name) {
         String camel = toCamelCase(name);
@@ -34,6 +34,11 @@ public class NameStringUtils {
         return String.valueOf(ch);
     }
 
+    /**
+     * 驼峰转下划线
+     * @param name
+     * @return
+     */
     public static String toDBColumnName(String name) {
         return reverseCamelLowerCase(name);
     }
@@ -56,6 +61,11 @@ public class NameStringUtils {
         return sb.toString();
     }
 
+    /**
+     * 下划线/横线转驼峰
+     * @param name
+     * @return
+     */
     public static String toCamelCase(String name) {
         StringBuilder sb = new StringBuilder();
         char[] ch = name.trim().toCharArray();
