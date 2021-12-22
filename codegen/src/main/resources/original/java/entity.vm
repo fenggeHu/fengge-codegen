@@ -17,7 +17,11 @@ public class ${entityClassName} {
         * $!col.remarks
         */
     #if("" != "$!col.remarks")
+    #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
     @ApiModelProperty("$!col.remarks")
+    #else
+    @ApiModelProperty(value = "$!col.remarks", hidden = true)
+    #end
     #end
     private $col.javaType $_nameString.toPropertyName("${col.name}");
 
