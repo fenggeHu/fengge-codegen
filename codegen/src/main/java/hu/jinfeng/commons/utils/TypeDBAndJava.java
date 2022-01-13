@@ -41,6 +41,8 @@ public class TypeDBAndJava {
             return "Double";
         } else if (type.indexOf("DATE") >= 0) {
             return "Date";
+        } else if (type.indexOf("TIMESTAMP") >= 0) {
+            return "Date";
         } else {
             return "String";
         }
