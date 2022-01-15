@@ -230,6 +230,8 @@ public class GenTableService {
                     FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
                 } catch (IOException e) {
                     throw new RuntimeException("渲染模板失败，表名：" + table.getTableName());
+//                } catch (FormatterException e) {
+//                    throw new RuntimeException("格式化模板失败，表名：" + table.getTableName());
                 }
             }
         }

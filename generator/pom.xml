@@ -98,6 +98,10 @@
             <artifactId>common</artifactId>
         </dependency>
         -->
+<!--        <dependency>-->
+<!--            <groupId>com.google.googlejavaformat</groupId>-->
+<!--            <artifactId>google-java-format</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <dependencyManagement>
@@ -219,6 +223,11 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.11.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.googlejavaformat</groupId>
+                <artifactId>google-java-format</artifactId>
+                <version>1.8</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

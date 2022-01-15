@@ -32,8 +32,7 @@ import TableDataInfo;
  */
 @RestController
 @RequestMapping("/${moduleName}/${businessName}")
-public class ${ClassName}Controller extends BaseController
-{
+public class ${ClassName}Controller extends BaseController {
     @Autowired
     private ${ClassName}Service ${className}Service;
 

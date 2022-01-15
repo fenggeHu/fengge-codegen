@@ -23,8 +23,7 @@ import TreeEntity;
 #set($Entity="TreeEntity")
 #end
 @Data
-public class ${ClassName} 
-{
+public class ${ClassName} {
     private static final long serialVersionUID = 1L;
 
 #foreach ($column in $columns)
