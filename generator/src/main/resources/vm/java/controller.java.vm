@@ -16,8 +16,8 @@ import Log;
 import BaseController;
 import AjaxResult;
 import BusinessType;
-import ${packageName}.domain.${ClassName};
-import ${packageName}.service.I${ClassName}Service;
+import ${packageName}.entity.${ClassName};
+import ${packageName}.service.${ClassName}Service;
 import ExcelUtil;
 #if($table.crud || $table.sub)
 import TableDataInfo;
@@ -35,7 +35,7 @@ import TableDataInfo;
 public class ${ClassName}Controller extends BaseController
 {
     @Autowired
-    private I${ClassName}Service ${className}Service;
+    private ${ClassName}Service ${className}Service;
 
     /**
      * 查询${functionName}列表
@@ -46,13 +46,13 @@ public class ${ClassName}Controller extends BaseController
     public TableDataInfo list(${ClassName} ${className})
     {
         startPage();
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        List<${ClassName}> list = ${className}Service.queryForList(${className});
         return getDataTable(list);
     }
 #elseif($table.tree)
     public AjaxResult list(${ClassName} ${className})
     {
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        List<${ClassName}> list = ${className}Service.queryForList(${className});
         return AjaxResult.success(list);
     }
 #end
@@ -61,11 +61,11 @@ public class ${ClassName}Controller extends BaseController
      * 导出${functionName}列表
      */
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:export')")
-    @Log(title = "${functionName}", businessType = BusinessType.EXPORT)
+    //@Log(title = "${functionName}", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ${ClassName} ${className})
     {
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        List<${ClassName}> list = ${className}Service.queryForList(${className});
         ExcelUtil<${ClassName}> util = new ExcelUtil<${ClassName}>(${ClassName}.class);
         util.exportExcel(response, list, "${functionName}数据");
     }
@@ -77,39 +77,39 @@ public class ${ClassName}Controller extends BaseController
     @GetMapping(value = "/{${pkColumn.javaField}}")
     public AjaxResult getInfo(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField})
     {
-        return AjaxResult.success(${className}Service.select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaField}));
+        return AjaxResult.success(${className}Service.selectBy${pkColumn.capJavaField}(${pkColumn.javaField}));
     }
 
     /**
      * 新增${functionName}
      */
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:add')")
-    @Log(title = "${functionName}", businessType = BusinessType.INSERT)
+    //@Log(title = "${functionName}", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ${ClassName} ${className})
     {
-        return toAjax(${className}Service.insert${ClassName}(${className}));
+        return toAjax(${className}Service.insert(${className}));
     }
 
     /**
      * 修改${functionName}
      */
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:edit')")
-    @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
+    //@Log(title = "${functionName}", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ${ClassName} ${className})
     {
-        return toAjax(${className}Service.update${ClassName}(${className}));
+        return toAjax(${className}Service.update(${className}));
     }
 
     /**
      * 删除${functionName}
      */
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:remove')")
-    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+    //@Log(title = "${functionName}", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{${pkColumn.javaField}s}")
     public AjaxResult remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s)
     {
-        return toAjax(${className}Service.delete${ClassName}By${pkColumn.capJavaField}s(${pkColumn.javaField}s));
+        return toAjax(${className}Service.deleteBy${pkColumn.capJavaField}s(${pkColumn.javaField}s));
     }
 }
