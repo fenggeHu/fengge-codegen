@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @Builder
-@ApiModel("${tableInfo.name}")
+@ApiModel("#if($!tableInfo.remarks =='')${tableInfo.name}#else${tableInfo.remarks)#end")
 public class ${entityClassName} {
     #foreach($col in $tableInfo.columns)
     /**
