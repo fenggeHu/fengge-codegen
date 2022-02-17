@@ -2,14 +2,12 @@ package ${entityPackage};
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 #if($tableInfo.hasDateType())
 import java.util.Date;
 #end
 
 @Data
-@Builder
 #if($!tableInfo.remarks =='')
 @ApiModel("$!{tableInfo.name}")
 #else
