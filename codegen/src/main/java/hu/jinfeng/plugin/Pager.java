@@ -2,6 +2,8 @@ package hu.jinfeng.plugin;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -12,12 +14,18 @@ import java.io.Serializable;
 @ApiModel("分页")
 public class Pager implements Serializable {
     private static final long serialVersionUID = 1L;
+    @Getter
+    @Setter
     @ApiModelProperty("页码")
     private int pageNum;
+    @Setter
+    @Getter
     @ApiModelProperty("pageSize")
     private int pageSize;
+    @Getter
     @ApiModelProperty(value = "起始行", hidden = true)
     private int startRow;
+    @Getter
     @ApiModelProperty(value = "结束行", hidden = true)
     private int endRow;
 
@@ -40,19 +48,4 @@ public class Pager implements Serializable {
         return new Pager(pageNum, pageSize);
     }
 
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public int getStartRow() {
-        return startRow;
-    }
-
-    public int getEndRow() {
-        return endRow;
-    }
 }
