@@ -8,9 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * ${tableInfo.name} - ${tableInfo.remarks}
+ * ${tableInfo.remarks} - 表名${tableInfo.name}
  **/
-@Mapper
 public interface ${entityClassName}Mapper {
     #set($fin=0)
     #set($fin2=0)
