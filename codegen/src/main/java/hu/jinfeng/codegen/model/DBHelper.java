@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +37,7 @@ public class DBHelper {
     @Autowired
     private MakeCodeConfiguration makeCodeConfiguration;
 
-    private DruidDataSource dataSource = null;
+//    private DataSource dataSource = null;
 
     public DatabaseMetaData getDatabaseMetaData() throws Exception {
         return getConnection().getMetaData();
@@ -71,7 +73,7 @@ public class DBHelper {
         table.setUpdateColumns(updateFields);
         while (columns.next()) {
             ColumnInfo columnInfo = new ColumnInfo();
-            columnInfo.setDbType(dataSource.getDbType());
+//            columnInfo.setDbType(dataSource.getDbType());
             columnInfo.setName(columns.getString("COLUMN_NAME"));
             columnInfo.setType(columns.getString("TYPE_NAME"));
             columnInfo.setSize(columns.getString("COLUMN_SIZE"));
@@ -145,6 +147,7 @@ public class DBHelper {
 
         ResultSet tableInfo = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
         tableInfo.next();
+        // 数据库的连接参数必须加上remarks=true&useInformationSchema=true才能读取到REMARKS
         table.setRemarks(tableInfo.getString("REMARKS"));
 
         ResultSet pkRS = metaData.getPrimaryKeys(database, null, tableName);
@@ -155,7 +158,7 @@ public class DBHelper {
         ResultSet ukRs = metaData.getIndexInfo(database, null, tableName, true, false);
         while (ukRs.next()) {
             String cn = ukRs.getString("COLUMN_NAME");
-            if(table.getPkNames().contains(cn)) continue;
+            if (table.getPkNames().contains(cn)) continue;
             table.getUkNames().add(cn);
         }
 
@@ -164,7 +167,7 @@ public class DBHelper {
 
         List<ColumnInfo> indexColumns = new LinkedList<>();
         ResultSet index = metaData.getIndexInfo(database, "%", tableName, false, false);
-        while (index.next()){
+        while (index.next()) {
             String colName = index.getString("COLUMN_NAME");
             ColumnInfo columnInfo = table.getColumnInfo(colName);
             indexColumns.add(columnInfo);
@@ -173,35 +176,54 @@ public class DBHelper {
         return table;
     }
 
-    public Connection getConnection() throws Exception {
-        if (dataSource == null) {
-            dataSource = getDruidDataSource();
+    public Connection getConnection() {
+        Connection conn = null;
+        try {
+            //连接数据库
+//            Properties props = new Properties();
+////            props.put("remarksReporting", "true");
+//            props.put("user", username);
+//            props.put("password", password);
+//            conn = DriverManager.getConnection(dbUrl, props);
+
+            conn = DriverManager.getConnection(dbUrl, username, password);
+            conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return dataSource.getConnection();
+        return conn;
     }
 
-    public DruidDataSource getDruidDataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(dbUrl);
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-
-        dataSource.setInitialSize(1);
-        dataSource.setMinIdle(1);
-        dataSource.setMaxActive(20);
-        dataSource.setRemoveAbandoned(true);
-        dataSource.setRemoveAbandonedTimeout(30);
-        //配置获取连接等待超时的时间
-        dataSource.setMaxWait(20000);
-        //配置间隔多久(毫秒)才进行一次检测，检测需要关闭的空闲连接
-        dataSource.setTimeBetweenEvictionRunsMillis(20000);
-        //防止过期
-        dataSource.setValidationQuery("SELECT 'x'");
-        dataSource.setTestWhileIdle(true);
-        dataSource.setTestOnBorrow(true);
-        // 建立了连接
-        return dataSource;
-    }
+//    public Connection getConnection() throws Exception {
+//        if (dataSource == null) {
+//            dataSource = getDruidDataSource();
+//        }
+//        return dataSource.getConnection();
+//    }
+//
+//    public DruidDataSource getDruidDataSource() {
+//        DruidDataSource dataSource = new DruidDataSource();
+//
+//        dataSource.setUrl(dbUrl);
+//        dataSource.setDriverClassName(driverClassName);
+//        dataSource.setUsername(username);
+//        dataSource.setPassword(password);
+//
+//        dataSource.setInitialSize(1);
+//        dataSource.setMinIdle(1);
+//        dataSource.setMaxActive(20);
+//        dataSource.setRemoveAbandoned(true);
+//        dataSource.setRemoveAbandonedTimeout(30);
+//        //配置获取连接等待超时的时间
+//        dataSource.setMaxWait(20000);
+//        //配置间隔多久(毫秒)才进行一次检测，检测需要关闭的空闲连接
+//        dataSource.setTimeBetweenEvictionRunsMillis(20000);
+//        //防止过期
+//        dataSource.setValidationQuery("SELECT 'x'");
+//        dataSource.setTestWhileIdle(true);
+//        dataSource.setTestOnBorrow(true);
+//        // 建立了连接
+//        return dataSource;
+//    }
 
 }

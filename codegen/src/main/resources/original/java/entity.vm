@@ -13,8 +13,9 @@ import java.util.Date;
 #else
 @ApiModel("$!{tableInfo.remarks}")
 #end
-public class ${entityClassName} {
+public class ${entityClassName} #if(${entityCols.size()}>0) extends BaseEntity #end{
     #foreach($col in $tableInfo.columns)
+    #if(!$entityCols.contains($col.name))
     /**
         * $!col.remarks
         */
@@ -26,6 +27,6 @@ public class ${entityClassName} {
     #end
     #end
     private $col.javaType $_nameString.toPropertyName("${col.name}");
-
+    #end
     #end
 }

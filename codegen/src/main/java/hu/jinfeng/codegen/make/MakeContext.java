@@ -4,6 +4,7 @@ import hu.jinfeng.codegen.model.TableInfo;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,9 +29,14 @@ public class MakeContext {
 
     private String controllerPackage;
     /**
-     *
+     * 库表信息
      */
     private TableInfo tableInfo;
+
+    /**
+     *
+     */
+    private List<String> entityCols;
 
     public Map<String, Object> buildContext() {
         Map<String, Object> result = new HashMap<>();
@@ -42,6 +48,7 @@ public class MakeContext {
         result.put("mapperPackage", this.getMapperPackage());
         result.put("repositoryPackage", this.getRepositoryPackage());
         result.put("controllerPackage", this.getControllerPackage());
+        result.put("entityCols", this.getEntityCols());
 
         return result;
     }

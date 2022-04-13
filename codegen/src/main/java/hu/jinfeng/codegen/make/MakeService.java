@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -30,6 +31,10 @@ public class MakeService {
 
     @SneakyThrows
     public boolean execute(MakeContext makeContext) {
+        if (null != makeCodeConfiguration.getEntityInclude()) {
+            makeContext.setEntityCols(Arrays.asList(makeCodeConfiguration.getEntityInclude()));
+        }
+
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
         String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));

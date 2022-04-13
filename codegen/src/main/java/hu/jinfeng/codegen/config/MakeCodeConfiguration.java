@@ -37,6 +37,11 @@ public class MakeCodeConfiguration {
      */
     @Value("${mapper.update.exclude}")
     private String[] updateExclude;
+    /**
+     * 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段
+     */
+    @Value("${entity.column.include:}")
+    private String[] entityInclude;
 
     public String getCodeOutputPath() {
         String resource = this.getClass().getResource("/").getPath();
