@@ -34,6 +34,8 @@ public class MakeService {
         if (null != makeCodeConfiguration.getEntityInclude()) {
             makeContext.setEntityCols(Arrays.asList(makeCodeConfiguration.getEntityInclude()));
         }
+        String templatePath = StringUtils.isNotBlank(makeCodeConfiguration.getTemplatePath()) ?
+                makeCodeConfiguration.getTemplatePath() : VelocityEngineUtils.LOCAL_RESOURCE_PATH;
 
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_nameString", new NameStringUtils());
@@ -41,7 +43,7 @@ public class MakeService {
         vmContext.put("entityClassName", entityClassName);
         //1，生产entity对象
         if (null != makeContext.getEntityPackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/entity.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/original/java/entity.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
@@ -52,7 +54,7 @@ public class MakeService {
 
         // 生成query - 超过1个索引字段才生成
         if (null != makeContext.getQueryPackage() && makeContext.getTableInfo().getIndexColumns().size() > 1) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/query.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/original/java/query.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
@@ -63,7 +65,7 @@ public class MakeService {
 
         //2, 生成mapper
         if (null != makeContext.getMapperPackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "original/java/mapper.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/original/java/mapper.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
@@ -77,7 +79,7 @@ public class MakeService {
         }
         //3, 生成service
         if (null != makeContext.getRepositoryPackage()) {
-            String vm = FileUtils.readLocalFile(VelocityEngineUtils.LOCAL_RESOURCE_PATH + "template/java/repository.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/template/java/repository.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +

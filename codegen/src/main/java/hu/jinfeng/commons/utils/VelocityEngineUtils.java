@@ -25,7 +25,7 @@ public class VelocityEngineUtils {
         velocityEngine.setProperty(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
         velocityEngine.init();
         LOCAL_RESOURCE_PATH = VelocityEngineUtils.class.getResource("/").getPath();
-        String codeRoot = new File(LOCAL_RESOURCE_PATH).getParentFile().getParentFile().getAbsolutePath();
+//        String codeRoot = new File(LOCAL_RESOURCE_PATH).getParentFile().getParentFile().getAbsolutePath();
     }
 
     /**

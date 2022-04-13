@@ -1,5 +1,7 @@
 package hu.jinfeng.commons.utils;
 
+import lombok.SneakyThrows;
+
 import java.io.*;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -102,11 +104,29 @@ public class FileUtils {
     }
 
     public static String readLocalFile(File file) {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
+            int len;
+            byte[] buffer = new byte[1024];
+            while ((len = is.read(buffer)) != -1) {
+                sb.append(new String(buffer, 0, len));
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("readLocalFile_error: " + file.getPath(), e);
+        }
+    }
+
+    @SneakyThrows
+    public static String readLocalFile2(File file) {
+        BufferedReader in = null;
+        FileReader reader = null;
         try {
             if (!file.exists() || !file.isFile() || !file.canRead()) {
                 return null;
             }
-            BufferedReader in = new BufferedReader(new FileReader(file));
+            reader = new FileReader(file);
+            in = new BufferedReader(reader);
             StringBuilder sb = new StringBuilder();
             String str;
             while ((str = in.readLine()) != null) {
@@ -118,6 +138,13 @@ public class FileUtils {
             return sb.toString();
         } catch (IOException e) {
             throw new RuntimeException("readLocalFile_error: " + file.getPath(), e);
+        } finally {
+            if (null != in) {
+                in.close();
+            }
+            if (null != reader) {
+                reader.close();
+            }
         }
     }
 

@@ -28,6 +28,11 @@ public class MakeCodeConfiguration {
     @Value("${output.path}")
     private String codeOutputPath;
     /**
+     * 代码模板目录
+     */
+    @Value("${template.path}")
+    private String templatePath;
+    /**
      * insert语句排除字段
      */
     @Value("${mapper.insert.exclude}")
