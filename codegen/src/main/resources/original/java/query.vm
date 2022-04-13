@@ -1,4 +1,4 @@
-package ${entityPackage};
+package ${queryPackage};
 
 import plugin.Pager;
 import io.swagger.annotations.ApiModelProperty;
