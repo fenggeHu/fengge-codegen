@@ -8,6 +8,9 @@ import lombok.Data;
 import java.util.Date;
 #end
 
+/**
+ * ${tableInfo.remarks} - 查询条件 - 默认包含所有的索引字段和分页参数
+ **/
 @Data
 @Builder
 public class ${entityClassName}Query {
