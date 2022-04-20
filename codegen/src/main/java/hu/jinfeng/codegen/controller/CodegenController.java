@@ -1,8 +1,8 @@
 package hu.jinfeng.codegen.controller;
 
 import hu.jinfeng.codegen.model.DBHelper;
-import hu.jinfeng.codegen.make.MakeContext;
 import hu.jinfeng.codegen.make.MakeService;
+import hu.jinfeng.codegen.model.TableInfo;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Author hujinfeng  @Date 2020/11/27
@@ -32,20 +33,26 @@ public class CodegenController {
 //            , @ApiImplicitParam(paramType = "query", dataType = "String", name = "controllerPackage", defaultValue = "hu.jinfeng.controller")
     })
     @GetMapping(value = "/make")
-    public String make(String database, String tableName, String basePackage) throws Exception {
+    public String make(String database, String tableName, String basePackage) {
         String[] tables = tableName.split(",");
         Arrays.stream(tables).forEach(e -> {
-            MakeContext makeContext = new MakeContext();
-            makeContext.setBasePackage(basePackage);
-            makeContext.setQueryPackage(basePackage + ".query");
-            makeContext.setEntityPackage(basePackage + ".entity");
-            makeContext.setMapperPackage(basePackage + ".mapper");
-            makeContext.setRepositoryPackage(basePackage + ".repository");
-            makeContext.setControllerPackage(basePackage + ".controller");
-            makeContext.setTableInfo(dbHelper.getTableInfo(database, e));
-            makeService.execute(makeContext);
+            makeService.execute(database, e, basePackage);
         });
         return "success";
     }
 
+
+    /**
+     * 生成库里所有的表
+     *
+     * @return
+     */
+    @GetMapping(value = "/makeAll")
+    public String makeAll(String database, String basePackage) {
+        List<TableInfo> tables = dbHelper.getAllTables(null);
+        for (TableInfo table : tables) {
+            makeService.execute(database, table.getName(), basePackage);
+        }
+        return "success";
+    }
 }

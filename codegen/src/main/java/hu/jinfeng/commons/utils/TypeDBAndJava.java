@@ -32,7 +32,7 @@ public class TypeDBAndJava {
     public static String getJavaType(String db, String type) {
         type = type.trim().toUpperCase();
         if (type.startsWith("BIT")) {
-            return "Boolean";
+            return "Integer";
         } else if (type.indexOf("BIGINT") >= 0) {
             return "Long";
         } else if (type.indexOf("INT") >= 0) {

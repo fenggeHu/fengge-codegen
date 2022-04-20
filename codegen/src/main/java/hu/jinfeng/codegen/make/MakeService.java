@@ -2,11 +2,13 @@ package hu.jinfeng.codegen.make;
 
 import com.google.googlejavaformat.java.Formatter;
 import hu.jinfeng.codegen.config.MakeCodeConfiguration;
+import hu.jinfeng.codegen.model.DBHelper;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
 import hu.jinfeng.commons.utils.VelocityEngineUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +20,8 @@ import java.util.Map;
  **/
 @Service
 public class MakeService {
+    @Autowired
+    private DBHelper dbHelper;
     @Resource
     private MakeCodeConfiguration makeCodeConfiguration;
 
@@ -27,6 +31,24 @@ public class MakeService {
             return tableName.substring(makeCodeConfiguration.getTablePrefixRemove().length());
         }
         return tableName;
+    }
+
+    /**
+     * 生成代码
+     * @param database
+     * @param tableName
+     * @param basePackage
+     */
+    public void execute(String database, String tableName, String basePackage) {
+        MakeContext makeContext = new MakeContext();
+        makeContext.setBasePackage(basePackage);
+        makeContext.setQueryPackage(basePackage + ".query");
+        makeContext.setEntityPackage(basePackage + ".entity");
+        makeContext.setMapperPackage(basePackage + ".mapper");
+        makeContext.setRepositoryPackage(basePackage + ".repository");
+        makeContext.setControllerPackage(basePackage + ".controller");
+        makeContext.setTableInfo(dbHelper.getTableInfo(database, tableName));
+        this.execute(makeContext);
     }
 
     @SneakyThrows

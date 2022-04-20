@@ -1,6 +1,5 @@
 package hu.jinfeng.codegen.model;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import hu.jinfeng.codegen.config.MakeCodeConfiguration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -9,12 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +40,8 @@ public class DBHelper {
         return getConnection().getMetaData();
     }
 
-    public List<TableInfo> getAllTables(String database) throws Exception {
+    @SneakyThrows
+    public List<TableInfo> getAllTables(String database) {
         List<TableInfo> result = new ArrayList<>();
         DatabaseMetaData metaData = getDatabaseMetaData();
         if (null == database) {
