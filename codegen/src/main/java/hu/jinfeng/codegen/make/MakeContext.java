@@ -38,6 +38,14 @@ public class MakeContext {
      */
     private List<String> entityCols;
 
+    public String getDatabase() {
+        return this.database != null ? this.database : this.tableInfo.getDatabase();
+    }
+
+    public String getTableName() {
+        return this.tableName != null ? this.tableName : this.tableInfo.getName();
+    }
+
     public Map<String, Object> buildContext() {
         Map<String, Object> result = new HashMap<>();
         result.put("database", this.getDatabase());

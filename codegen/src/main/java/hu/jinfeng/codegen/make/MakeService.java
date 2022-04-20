@@ -7,6 +7,7 @@ import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
 import hu.jinfeng.commons.utils.VelocityEngineUtils;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * @Author hujinfeng  @Date 2020/11/28
  **/
+@Slf4j
 @Service
 public class MakeService {
     @Autowired
@@ -35,6 +37,7 @@ public class MakeService {
 
     /**
      * 生成代码
+     *
      * @param database
      * @param tableName
      * @param basePackage
@@ -48,6 +51,8 @@ public class MakeService {
         makeContext.setRepositoryPackage(basePackage + ".repository");
         makeContext.setControllerPackage(basePackage + ".controller");
         makeContext.setTableInfo(dbHelper.getTableInfo(database, tableName));
+        log.info("Generate: db:{}, table:{}, package:{}",
+                makeContext.getDatabase(), makeContext.getTableName(), makeContext.getBasePackage());
         this.execute(makeContext);
     }
 
