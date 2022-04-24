@@ -1,13 +1,19 @@
 package plugin;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * @Description:
  * @Author Jinfeng.hu  @Date 2022/4/13
  **/
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseEntity {
 
     /** 状态值 1启用 0禁用 */
