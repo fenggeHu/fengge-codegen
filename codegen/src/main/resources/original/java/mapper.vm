@@ -29,7 +29,7 @@ public interface ${entityClassName}Mapper {
 @Insert("<script> " +
 "INSERT INTO `${tableInfo.name}`(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end) VALUES " +
 "<foreach collection ='entities' item='item' separator =','>" +
-"(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)" +
+"(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{item.$_nameString.toPropertyName("${col.name}")}#end#end)" +
 "</foreach>" +
 "</script>")
 void insertBatch(List<${entityClassName}> entities);
