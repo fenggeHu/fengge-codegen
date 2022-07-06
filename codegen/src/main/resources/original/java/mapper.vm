@@ -32,7 +32,7 @@ public interface ${entityClassName}Mapper {
 "(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{item.$_nameString.toPropertyName("${col.name}")}#end#end)" +
 "</foreach>" +
 "</script>")
-void insertBatch(List<${entityClassName}> entities);
+void insertBatch(@Param("entities") List<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
