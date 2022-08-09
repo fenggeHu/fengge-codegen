@@ -71,6 +71,7 @@ public class MakeService {
         vmContext.put("_mapper", new MapperHelper());
         String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
         vmContext.put("entityClassName", entityClassName);
+        vmContext.put("entityPropertyName", NameStringUtils.toPropertyName(entityClassName));
         //1，生产entity对象
         if (null != makeContext.getEntityPackage()) {
             String vm = FileUtils.readLocalFile(templatePath + "/original/java/entity.vm");
@@ -125,6 +126,16 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makeCodeConfiguration.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getParamPackage()) + "/" + entityClassName + "Param.java";
+                FileUtils.writeFile(path, new Formatter().formatSource(content));
+            }
+        }
+        // controller
+        if (null != makeContext.getRepositoryPackage()) {
+            String vm = FileUtils.readLocalFile(templatePath + "/original/java/controller.vm");
+            if (null != vm) {
+                String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
+                String path = makeCodeConfiguration.getCodeOutputPath() +
+                        FileUtils.package2Path(makeContext.getControllerPackage()) + "/" + entityClassName + "Controller.java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }

@@ -27,18 +27,18 @@ import java.sql.Timestamp;
 #end
 public class ${entityClassName} #if(${entityCols.size()}>0) extends BaseEntity #end{
     #foreach($col in $tableInfo.columns)
-    #if(!$entityCols.contains($col.name))
-    /**
-        * $!col.remarks
-        */
-    #if("" != "$!col.remarks")
-    #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
-    @ApiModelProperty("$!col.remarks")
-    #else
-    @ApiModelProperty(value = "$!col.remarks", hidden = true)
-    #end
-    #end
-    private $col.javaType $_name.toPropertyName("${col.name}");
-    #end
+        #if(!$entityCols.contains($col.name))
+            #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
+                /**
+                    * $!col.remarks
+                    */
+                #if("" != "$!col.remarks")
+                @ApiModelProperty("$!col.remarks")
+                #else
+                @ApiModelProperty(value = "$!col.remarks", hidden = true)
+                #end
+                private $col.javaType $_name.toPropertyName("${col.name}");
+            #end
+        #end
     #end
 }

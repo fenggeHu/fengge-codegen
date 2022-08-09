@@ -9,6 +9,7 @@ import java.util.Date;
 #if($tableInfo.hasTimestampType())
 import java.sql.Timestamp;
 #end
+import ${entityPackage}.${entityClassName};
 
 @Data
 #if($!tableInfo.remarks =='')
@@ -17,21 +18,34 @@ import java.sql.Timestamp;
 @ApiModel("$!{tableInfo.remarks}")
 #end
 public class ${entityClassName}Param {
-
     #foreach($col in $tableInfo.columns)
-    #if(!$entityCols.contains($col.name))
-    /**
-        * $!col.remarks
-        */
-    #if("" != "$!col.remarks")
-    #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
-    @ApiModelProperty("$!col.remarks")
-    #else
-    @ApiModelProperty(value = "$!col.remarks", hidden = true)
-    #end
-    #end
-    private $col.javaType $_name.toPropertyName("${col.name}");
-    #end
+        #if(!$entityCols.contains($col.name))
+            #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
+                /**
+                    * $!col.remarks
+                    */
+                #if("" != "$!col.remarks")
+                @ApiModelProperty("$!col.remarks")
+                #else
+                @ApiModelProperty(value = "$!col.remarks", hidden = true)
+                #end
+                private $col.javaType $_name.toPropertyName("${col.name}");
+            #end
+        #end
     #end
 
+    /**
+    * param字段是entity的子集
+    */
+    public ${entityClassName} toEntity(${entityClassName}Param param) {
+        return ${entityClassName}.builder()
+    #foreach($col in $tableInfo.columns)
+        #if(!$entityCols.contains($col.name))
+            #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
+                .${_name.toPropertyName("${col.name}")}(param.get${_name.toClassName("${col.name}")}())
+            #end
+        #end
+    #end
+        .build();
+    }
 }

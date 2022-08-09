@@ -4,8 +4,11 @@ import plugin.Pager;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
-#if($tableInfo.hasDateTypeOfIndex())
+#if($tableInfo.hasDateInIndex())
 import java.util.Date;
+#end
+#if($tableInfo.hasTimestampInIndex())
+import java.sql.Timestamp;
 #end
 
 /**

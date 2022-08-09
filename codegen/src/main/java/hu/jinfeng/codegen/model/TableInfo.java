@@ -56,9 +56,29 @@ public class TableInfo {
         }
         return false;
     }
+    public boolean hasDateInIndex() {
+        if (null != indexColumns) {
+            for (ColumnInfo columnInfo : indexColumns) {
+                if ("Date".equalsIgnoreCase(columnInfo.getJavaType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public boolean hasTimestampType() {
         if (null != columns) {
             for (ColumnInfo columnInfo : columns) {
+                if ("Timestamp".equalsIgnoreCase(columnInfo.getJavaType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean hasTimestampInIndex() {
+        if (null != indexColumns) {
+            for (ColumnInfo columnInfo : indexColumns) {
                 if ("Timestamp".equalsIgnoreCase(columnInfo.getJavaType())) {
                     return true;
                 }
@@ -93,14 +113,4 @@ public class TableInfo {
         return null;
     }
 
-    public boolean hasDateTypeOfIndex() {
-        if (null != indexColumns) {
-            for (ColumnInfo columnInfo : indexColumns) {
-                if ("Date".equalsIgnoreCase(columnInfo.getJavaType())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
