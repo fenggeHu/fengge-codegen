@@ -2,6 +2,7 @@ package hu.jinfeng.codegen.make;
 
 import com.google.googlejavaformat.java.Formatter;
 import hu.jinfeng.codegen.config.MakeCodeConfiguration;
+import hu.jinfeng.codegen.vmhelper.MapperHelper;
 import hu.jinfeng.codegen.model.DBHelper;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
@@ -65,7 +66,8 @@ public class MakeService {
                 makeCodeConfiguration.getTemplatePath() : VelocityEngineUtils.LOCAL_RESOURCE_PATH;
 
         Map<String, Object> vmContext = makeContext.buildContext();
-        vmContext.put("_nameString", new NameStringUtils());
+        vmContext.put("_name", new NameStringUtils());
+        vmContext.put("_mapper", new MapperHelper());
         String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
         vmContext.put("entityClassName", entityClassName);
         //1，生产entity对象

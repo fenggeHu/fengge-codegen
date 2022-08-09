@@ -14,31 +14,37 @@ public interface ${entityClassName}Mapper {
     #set($fin=0)
     #set($fin2=0)
     #if("$!{tableInfo.autoIncrementField}"!="")
-@Insert("INSERT INTO `${tableInfo.name}`(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement) #if($fin>0),#else #set($fin = 1) #end `${col.name}`#end#end)" +
-    "VALUES(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{$_nameString.toPropertyName("${col.name}")}#end#end)")
+@Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
+    " VALUES($_mapper.insertValues(${tableInfo})" +
+    " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
+    )
     @Options(useGeneratedKeys = true)
     long insert(${entityClassName} entity);
     #else
-@Insert("INSERT INTO `${tableInfo.name}`(#foreach($col in $tableInfo.insertColumns) `${col.name}`#if(${foreach.count}>0),#end#end)" +
-    "VALUES(#foreach($col in $tableInfo.insertColumns) #{$_nameString.toPropertyName("${col.name}")} #if(${foreach.count}>0),#end#end)")
+@Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
+    " VALUES($_mapper.insertValues(${tableInfo})" +
+    " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
+    )
     void insert(${entityClassName} entity);
     #end
     /** 批量插入 */
     #set($fin=0)
     #set($fin2=0)
 @Insert("<script> " +
-"INSERT INTO `${tableInfo.name}`(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin>0),#else#set($fin = 1)#end`${col.name}`#end#end) VALUES " +
-"<foreach collection ='entities' item='item' separator =','>" +
-"(#foreach($col in $tableInfo.insertColumns)#if(!$col.autoIncrement)#if($fin2>0),#else#set($fin2 = 1)#end#{item.$_nameString.toPropertyName("${col.name}")}#end#end)" +
+"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo})) VALUES " +
+"<foreach collection ='entities' item='it' separator =','>" +
+"($_mapper.batchInsertValues(${tableInfo}))" +
 "</foreach>" +
-"</script>")
+" ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})" +
+"</script>"
+)
 void insertBatch(@Param("entities") List<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
 @Update({"<script>",
-"UPDATE `${tableInfo.name}` SET#foreach($col in $tableInfo.updateColumns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}#end#end " +
-"WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end",
+"UPDATE `${tableInfo.name}` SET#foreach($col in $tableInfo.updateColumns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_name.toPropertyName("${col.name}")}#end#end " +
+"WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
     "</script>" })
     int update(${entityClassName} entity);
 
@@ -46,22 +52,22 @@ void insertBatch(@Param("entities") List<${entityClassName}> entities);
 "UPDATE `${tableInfo.name}` SET "+
 #foreach($pkName in $tableInfo.pkNames)
 #if(${foreach.index}==0)
-"`$pkName` = #{$_nameString.toPropertyName(${pkName})}" +
+"`$pkName` = #{$_name.toPropertyName(${pkName})}" +
 #end
 #end
 #foreach($col in $tableInfo.updateColumns)
     #if(!$tableInfo.pkNames.contains(${col.name}))
-        "<if test='$_nameString.toPropertyName(${col.name})!=null'>, `${col.name}`=#{$_nameString.toPropertyName("${col.name}")}</if>"+ 
+        "<if test='$_name.toPropertyName(${col.name})!=null'>, `${col.name}`=#{$_name.toPropertyName("${col.name}")}</if>"+ 
     #end
 #end
-" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end",
+" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
     "</script>" })
     int updateSelective(${entityClassName} entity);
 #end
 
 #if($tableInfo.pkColumns.size() > 0)
-@Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0) AND #end `$pkName` = #{$_nameString.toPropertyName(${pkName})}#end limit 1")
-${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end);
+@Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end limit 1")
+${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_name.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_name.toPropertyName(${pkColumn.name}) #end);
 
 @Select({"<script>",
     "SELECT * FROM `${tableInfo.name}` WHERE id in ",
@@ -74,15 +80,15 @@ List<${entityClassName}> selectByIds(@Param("ids") Collection<Long> ids);
 #end
 
 #if($tableInfo.ukColumns.size() > 0)
-@Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($ukName in $tableInfo.ukNames) #if(${foreach.index}!=0) AND #end `$ukName` = #{$_nameString.toPropertyName(${ukName})}#end limit 1")
-${entityClassName} selectByUniqueKey(#foreach($ukColumn in $tableInfo.ukColumns) #if(${foreach.index}!=0),#end @Param("$_nameString.toPropertyName(${ukColumn.name})") ${ukColumn.javaType} $_nameString.toPropertyName(${ukColumn.name}) #end);
+@Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($ukName in $tableInfo.ukNames) #if(${foreach.index}!=0) AND #end `$ukName` = #{$_name.toPropertyName(${ukName})}#end limit 1")
+${entityClassName} selectByUniqueKey(#foreach($ukColumn in $tableInfo.ukColumns) #if(${foreach.index}!=0),#end @Param("$_name.toPropertyName(${ukColumn.name})") ${ukColumn.javaType} $_name.toPropertyName(${ukColumn.name}) #end);
 #end
 
 #if($tableInfo.indexColumns.size() >1)
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
 #foreach($col in $tableInfo.indexColumns) 
-    "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
+    "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
  #end
     " LIMIT 1000</script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
@@ -90,7 +96,7 @@ List<${entityClassName}> query(${entityClassName}Query query);
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
 #foreach($col in $tableInfo.indexColumns) 
-    "<if test='$_nameString.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameString.toPropertyName(${col.name})}</if>" +
+    "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
  #end
     " LIMIT #{pager.startRow}, #{pager.pageSize}" +
     "</script>" })

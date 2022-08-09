@@ -16,7 +16,7 @@ import java.util.List;
  **/
 @Component
 public class ${repositoryClassName} {
-    #set($mapper = $_nameString.classNameToPropertyName(${mapperClassName}))
+    #set($mapper = $_name.classNameToPropertyName(${mapperClassName}))
     @Autowired
     private $mapperClassName $mapper;
 
@@ -51,8 +51,8 @@ public class ${repositoryClassName} {
     /**
      * PrimaryKey查询
      */
-    public ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end ${pkColumn.javaType} $_nameString.toPropertyName(${pkColumn.name}) #end){
-        return ${mapper}.selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end $_nameString.toPropertyName(${pkColumn.name}) #end);
+    public ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end ${pkColumn.javaType} $_name.toPropertyName(${pkColumn.name}) #end){
+        return ${mapper}.selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end $_name.toPropertyName(${pkColumn.name}) #end);
     }
 
 #if($tableInfo.indexColumns.size() >1)

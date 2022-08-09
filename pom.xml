@@ -27,6 +27,7 @@
         <mysql.connector.version>8.0.27</mysql.connector.version>
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
         <mybatis-plus.version>3.3.1.tmp</mybatis-plus.version>
+        <mvel2.version>2.4.10.Final</mvel2.version>
     </properties>
 
     <dependencyManagement>
@@ -105,6 +106,12 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
                 <version>1.6.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mvel</groupId>
+                <artifactId>mvel2</artifactId>
+                <version>${mvel2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

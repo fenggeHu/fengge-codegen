@@ -19,7 +19,7 @@ public class ${entityClassName} {
     #if("" != "$!col.remarks")
     @ApiModelProperty("$!col.remarks")
     #end
-    private $col.javaType $_nameString.toPropertyName("${col.name}");
+    private $col.javaType $_name.toPropertyName("${col.name}");
 
     #end
 }

@@ -19,7 +19,7 @@ public interface ${entityClassName}Mapper /** extends BaseMapper<${entityClassNa
 
     @UpdateProvider(type = GeneralProvider.class, method = "updateSQL")
     int update(${entityClassName} entity);
-#set($pkJavaName = $_nameString.toPropertyName(${tableInfo.pkColumn.name}))
+#set($pkJavaName = $_name.toPropertyName(${tableInfo.pkColumn.name}))
 
     @Select("SELECT * FROM ${tableInfo.name} WHERE ${tableInfo.pkColumn.name}=#{${pkJavaName}} limit 1")
     ${entityClassName} selectById(@Param("${pkJavaName}") ${tableInfo.pkColumn.javaType} ${pkJavaName});
