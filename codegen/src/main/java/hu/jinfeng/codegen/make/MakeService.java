@@ -139,6 +139,14 @@ public class MakeService {
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
         }
+        // application
+        String vm = FileUtils.readLocalFile(templatePath + "/original/java/application.vm");
+        if (null != vm) {
+            String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
+            String path = makeCodeConfiguration.getCodeOutputPath() +
+                    FileUtils.package2Path(makeContext.getBasePackage()) + "/Application.java";
+            FileUtils.writeFile(path, new Formatter().formatSource(content));
+        }
 
         return true;
     }

@@ -53,6 +53,7 @@ public class MakeContext {
         result.put("database", this.getDatabase());
         result.put("tableName", this.getTableName());
         result.put("tableInfo", this.tableInfo);
+        result.put("basePackage", this.getBasePackage());
         result.put("paramPackage", this.getParamPackage());
         result.put("entityPackage", this.getEntityPackage());
         result.put("queryPackage", this.getQueryPackage());

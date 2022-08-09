@@ -31,7 +31,7 @@ public class ${entityClassName}Controller {
     }
 
     @PostMapping("/get")
-    public ${entityClassName} get(id + uk) {
+    public ${entityClassName} get() {
         
         // todo
     }
