@@ -56,6 +56,16 @@ public class TableInfo {
         }
         return false;
     }
+    public boolean hasTimestampType() {
+        if (null != columns) {
+            for (ColumnInfo columnInfo : columns) {
+                if ("Timestamp".equalsIgnoreCase(columnInfo.getJavaType())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * 拿到第一个自增字段（暂不考虑多个自增字段）

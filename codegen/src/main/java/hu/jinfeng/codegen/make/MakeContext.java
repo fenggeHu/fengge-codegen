@@ -21,6 +21,8 @@ public class MakeContext {
 
     private String entityPackage;
 
+    private String paramPackage;
+
     private String queryPackage;
 
     private String mapperPackage;
@@ -51,6 +53,7 @@ public class MakeContext {
         result.put("database", this.getDatabase());
         result.put("tableName", this.getTableName());
         result.put("tableInfo", this.tableInfo);
+        result.put("paramPackage", this.getParamPackage());
         result.put("entityPackage", this.getEntityPackage());
         result.put("queryPackage", this.getQueryPackage());
         result.put("mapperPackage", this.getMapperPackage());

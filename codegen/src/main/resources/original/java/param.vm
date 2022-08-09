@@ -1,14 +1,8 @@
-package ${entityPackage};
+package ${paramPackage};
 
 import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-#if(${entityCols.size()}>0) 
-import plugin.BaseEntity;
-#end
 #if($tableInfo.hasDateType())
 import java.util.Date;
 #end
@@ -17,15 +11,13 @@ import java.sql.Timestamp;
 #end
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 #if($!tableInfo.remarks =='')
 @ApiModel("$!{tableInfo.name}")
 #else
 @ApiModel("$!{tableInfo.remarks}")
 #end
-public class ${entityClassName} #if(${entityCols.size()}>0) extends BaseEntity #end{
+public class ${entityClassName}Param {
+
     #foreach($col in $tableInfo.columns)
     #if(!$entityCols.contains($col.name))
     /**
@@ -41,4 +33,5 @@ public class ${entityClassName} #if(${entityCols.size()}>0) extends BaseEntity #
     private $col.javaType $_name.toPropertyName("${col.name}");
     #end
     #end
+
 }

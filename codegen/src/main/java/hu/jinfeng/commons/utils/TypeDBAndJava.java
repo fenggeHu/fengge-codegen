@@ -42,7 +42,7 @@ public class TypeDBAndJava {
         } else if (type.indexOf("DATE") >= 0) {
             return "Date";
         } else if (type.indexOf("TIMESTAMP") >= 0) {
-            return "Date";
+            return "Timestamp";
         } else {
             return "String";
         }

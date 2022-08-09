@@ -47,6 +47,7 @@ public class MakeService {
         MakeContext makeContext = new MakeContext();
         makeContext.setBasePackage(basePackage);
         makeContext.setQueryPackage(basePackage + ".query");
+        makeContext.setParamPackage(basePackage + ".param");
         makeContext.setEntityPackage(basePackage + ".entity");
         makeContext.setMapperPackage(basePackage + ".mapper");
         makeContext.setRepositoryPackage(basePackage + ".repository");
@@ -117,6 +118,16 @@ public class MakeService {
             }
         }
 
+        // 生产param对象
+        if (null != makeContext.getParamPackage()) {
+            String vm = FileUtils.readLocalFile(templatePath + "/original/java/param.vm");
+            if (null != vm) {
+                String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
+                String path = makeCodeConfiguration.getCodeOutputPath() +
+                        FileUtils.package2Path(makeContext.getParamPackage()) + "/" + entityClassName + "Param.java";
+                FileUtils.writeFile(path, new Formatter().formatSource(content));
+            }
+        }
 
         return true;
     }

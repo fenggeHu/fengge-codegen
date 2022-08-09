@@ -70,31 +70,20 @@ public class DBHelper {
         table.setInsertColumns(insertFields);
         table.setUpdateColumns(updateFields);
         while (columns.next()) {
-            ColumnInfo columnInfo = new ColumnInfo();
-//            columnInfo.setDbType(dataSource.getDbType());
-            columnInfo.setName(columns.getString("COLUMN_NAME"));
-            columnInfo.setType(columns.getString("TYPE_NAME"));
-            columnInfo.setSize(columns.getString("COLUMN_SIZE"));
-            columnInfo.setRemarks(columns.getString("REMARKS"));
-            columnInfo.setTableName(columns.getString("TABLE_NAME"));
-            columnInfo.setAutoIncrement("YES".equalsIgnoreCase(columns.getString("IS_AUTOINCREMENT")));
-            //供参考：null \ CURRENT_TIMESTAMP \0
-            columnInfo.setDefaultValue(columns.getString("COLUMN_DEF"));
+            ColumnInfo columnInfo = ColumnInfo.builder()
+                    .name(columns.getString("COLUMN_NAME"))
+                    .type(columns.getString("TYPE_NAME"))
+                    .size(columns.getLong("COLUMN_SIZE"))
+                    // decimal小数位数
+                    .digits(null == columns.getString("DECIMAL_DIGITS") ? null : columns.getInt("DECIMAL_DIGITS"))
+                    .remarks(columns.getString("REMARKS"))
+                    .tableName(columns.getString("TABLE_NAME"))
+                    .autoIncrement("YES".equalsIgnoreCase(columns.getString("IS_AUTOINCREMENT")))
+                    .nullAble(columns.getInt("NULLABLE") == 1)
+                    //供参考：null \ CURRENT_TIMESTAMP \0
+                    .defaultValue(columns.getString("COLUMN_DEF"))
+                    .build();
 
-//            System.out.println(columns.getObject("DATA_TYPE"));
-//            System.out.println(columns.getString("TABLE_CAT"));
-//            System.out.println(columns.getString("TYPE_NAME"));
-//            System.out.println(columns.getString("BUFFER_LENGTH"));
-//            System.out.println(columns.getString("DECIMAL_DIGITS"));
-//            System.out.println(columns.getString("NUM_PREC_RADIX"));
-//            System.out.println("NULLABLE: " + columns.getString("NULLABLE"));
-//            System.out.println(columns.getString("COLUMN_DEF"));
-//            System.out.println(columns.getString("SQL_DATA_TYPE"));
-//            System.out.println(columns.getString("SQL_DATETIME_SUB"));
-//            System.out.println("IS_NULLABLE: " + columns.getString("IS_NULLABLE"));
-//            System.out.println(columns.getString("SCOPE_TABLE"));
-//            System.out.println(columns.getString("SOURCE_DATA_TYPE"));
-//            System.out.println(columns.getString("IS_GENERATEDCOLUMN"));
             // pk
             if (table.getPkNames().contains(columnInfo.getName())) {
                 table.getPkColumns().add(columnInfo);

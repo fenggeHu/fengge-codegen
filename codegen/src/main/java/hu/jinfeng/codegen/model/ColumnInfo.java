@@ -1,12 +1,14 @@
 package hu.jinfeng.codegen.model;
 
 import hu.jinfeng.commons.utils.TypeDBAndJava;
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * @Author hujinfeng  @Date 2020/11/27
  **/
 @Data
+@Builder
 public class ColumnInfo {
     /**
      * COLUMN_NAME
@@ -18,8 +20,15 @@ public class ColumnInfo {
     private String type;
     /**
      * COLUMN_SIZE
+     * int类型size+1;
+     * TINYTEXT=255; TEXT=65535; MEDIUMTEXT=16777215; LONGTEXT=2147483647
+     * TIMESTAMP=23
      */
-    private String size;
+    private long size;
+    /**
+     * DECIMAL_DIGITS
+     */
+    private Integer digits;
     /**
      * REMARKS
      */
@@ -42,6 +51,10 @@ public class ColumnInfo {
      * 是否自增字段
      */
     private boolean autoIncrement;
+    /**
+     * 是否可为空
+     */
+    private boolean nullAble;
     /**
      * 字段类型转java类型
      */
