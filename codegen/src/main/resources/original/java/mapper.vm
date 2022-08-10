@@ -34,7 +34,7 @@ public interface ${entityClassName}Mapper {
 " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})" +
 "</script>"
 )
-void insertBatch(@Param("entities") List<${entityClassName}> entities);
+void batchInsert(@Param("entities") List<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
