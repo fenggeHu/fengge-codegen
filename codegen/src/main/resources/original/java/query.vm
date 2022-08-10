@@ -21,9 +21,7 @@ public class ${entityClassName}Query {
     /**
         * $!col.remarks
         */
-    #if("" != "$!col.remarks")
-    @ApiModelProperty("$!col.remarks")
-    #end
+    @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
     private $col.javaType $_name.toPropertyName("${col.name}");
 
     #end

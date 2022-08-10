@@ -6,6 +6,7 @@ import hu.jinfeng.codegen.vmhelper.MapperHelper;
 import hu.jinfeng.codegen.model.DBHelper;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
+import hu.jinfeng.commons.utils.StringUtil;
 import hu.jinfeng.commons.utils.VelocityEngineUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,7 @@ public class MakeService {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_name", new NameStringUtils());
         vmContext.put("_mapper", new MapperHelper());
+        vmContext.put("_stringUtil", new StringUtil());
         String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
         vmContext.put("entityClassName", entityClassName);
         vmContext.put("entityPropertyName", NameStringUtils.toPropertyName(entityClassName));

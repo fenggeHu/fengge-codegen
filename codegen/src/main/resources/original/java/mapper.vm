@@ -11,8 +11,6 @@ import java.util.List;
  * ${tableInfo.remarks} - 表名${tableInfo.name}
  **/
 public interface ${entityClassName}Mapper {
-    #set($fin=0)
-    #set($fin2=0)
     #if("$!{tableInfo.autoIncrementField}"!="")
 @Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
     " VALUES($_mapper.insertValues(${tableInfo})" +
@@ -28,8 +26,6 @@ public interface ${entityClassName}Mapper {
     void insert(${entityClassName} entity);
     #end
     /** 批量插入 */
-    #set($fin=0)
-    #set($fin2=0)
 @Insert("<script> " +
 "INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo})) VALUES " +
 "<foreach collection ='entities' item='it' separator =','>" +
