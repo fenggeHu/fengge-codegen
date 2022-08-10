@@ -13,14 +13,14 @@ import java.util.List;
 public interface ${entityClassName}Mapper {
     #if("$!{tableInfo.autoIncrementField}"!="")
 @Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
-    " VALUES($_mapper.insertValues(${tableInfo})" +
+    " VALUES($_mapper.insertValues(${tableInfo}))" +
     " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
     )
     @Options(useGeneratedKeys = true)
     long insert(${entityClassName} entity);
     #else
 @Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
-    " VALUES($_mapper.insertValues(${tableInfo})" +
+    " VALUES($_mapper.insertValues(${tableInfo}))" +
     " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
     )
     void insert(${entityClassName} entity);
