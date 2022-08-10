@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- * @Description:
+ * @Description: 启动类
  **/
 @EnableConfigurationProperties
 @MapperScan({"${mapperPackage}"})
