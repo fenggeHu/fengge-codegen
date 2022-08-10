@@ -67,8 +67,8 @@ ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns
 
 @Select({"<script>",
     "SELECT * FROM `${tableInfo.name}` WHERE id in ",
-    "<foreach collection='ids' item='item' index='index' open='(' separator=',' close=')'>",
-        "#{item}",
+    "<foreach collection='ids' item='it' index='index' open='(' separator=',' close=')'>",
+        "#{it}",
     "</foreach>",
     "</script>"
 })
