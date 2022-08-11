@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaginationData<T> {
+public class Pagination<T> {
     /**
      * 数据总量
      */
@@ -34,12 +34,20 @@ public class PaginationData<T> {
      */
     private List<T> list;
 
-    // 构造对象
-    public static PaginationData of() {
-        return PaginationData.builder().build();
+    /**
+     * 计算pageCount
+     */
+    public long getPageCount() {
+        if (total <= 0 || pageSize <= 0) return 0;
+        return total / pageSize + 1;
     }
 
-    public static PaginationData of(long total, int current, int pageSize, List list) {
-        return PaginationData.builder().total(total).current(current).pageSize(pageSize).list(list).build();
+    // 构造对象
+    public static Pagination of() {
+        return Pagination.builder().build();
+    }
+
+    public static Pagination of(long total, int current, int pageSize, List list) {
+        return Pagination.builder().total(total).current(current).pageSize(pageSize).list(list).build();
     }
 }
