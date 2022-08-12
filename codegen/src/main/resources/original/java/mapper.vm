@@ -93,16 +93,6 @@ List<${entityClassName}> selectByIds(@Param("${pkColProp}s") Collection<$pkCol.j
 ${entityClassName} selectOneByUniqueKey($_mapper.ukParam(${tableInfo}));
 #end
 
-#if($tableInfo.indexColumns.size() > 1)
-/**
-* 按索引字段查询
-*/
-@Select({"<script>","SELECT * FROM `${tableInfo.name}`  WHERE 1=1 ",
-      $_mapper.indexWhere(${tableInfo}) 
-     ," limit #{size} </script>"})
-List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}), @Param("size") Integer size);
-#end
-
 $_mapper.genAllSqlWithIndex(${tableInfo})
 
 #if($tableInfo.indexColumns.size() >1)

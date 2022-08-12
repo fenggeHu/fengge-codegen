@@ -223,25 +223,41 @@ public class MapperHelper extends BaseHelper {
     }
 
     public String genAllSqlWithIndex(final TableInfo table, String entityClassName) {
-        if (table.getIndexMap().isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, List<ColumnInfo>> entry : table.getIndexMap().entrySet()) {
-            String index = entry.getKey();
-            sb.append("/** 按索引 ").append(index).append(" 查询 */\n")
-                    .append("@Select({\"<script>\",\n \"SELECT * FROM `")
-                    .append(table.getName()).append("` WHERE 1=1 \",");
-            List<String> names = entry.getValue().stream().map(e -> e.getName()).collect(Collectors.toList());
-            String cond = mergeTestWhere(names, table.getShardingNames());
-            sb.append(cond).append(",\" limit #{size} </script>\"").append("\n})\n")
-                    .append("List<").append(entityClassName).append("> ");
+        // 所有的索引创建一个查询
+        List<ColumnInfo> allIndex = table.getAllIndexColumns();
+        sb.append("/** 按所有索引字段查询 */\n")
+                .append(this.getSelect(table.getName())).append(" WHERE 1=1 \",");
+        List<String> allNames = allIndex.stream().map(e -> e.getName()).collect(Collectors.toList());
+        String allCond = mergeTestWhere(allNames, table.getShardingNames());
+        sb.append(allCond).append(",\" limit #{size} </script>\"").append("\n})\n")
+                .append("List<").append(entityClassName).append("> ");
+        sb.append("selectByIndex(");
+        String allParam = mergeMybatisParam(allIndex, table.getShardingColumns());
+        sb.append(allParam).append(", @Param(\"size\") Integer size").append(");\n\n");
 
-            String method = "selectBy" + NameStringUtils.toClassName(index);
-            sb.append(method).append("(");
+        // 每组索引创建一个查询
+        if (!table.getIndexMap().isEmpty()) {
+            for (Map.Entry<String, List<ColumnInfo>> entry : table.getIndexMap().entrySet()) {
+                String index = entry.getKey();
+                sb.append("/** 按索引 ").append(index).append(" 查询 */\n")
+                        .append(this.getSelect(table.getName())).append(" WHERE 1=1 \",");
+                List<String> names = entry.getValue().stream().map(e -> e.getName()).collect(Collectors.toList());
+                String cond = mergeTestWhere(names, table.getShardingNames());
+                sb.append(cond).append(",\" limit #{size} </script>\"").append("\n})\n")
+                        .append("List<").append(entityClassName).append("> ");
 
-            String param = mergeMybatisParam(entry.getValue(), table.getShardingColumns());
-            sb.append(param).append(", @Param(\"size\") Integer size").append(");\n\n");
+                String method = "selectBy" + NameStringUtils.toClassName(index);
+                sb.append(method).append("(");
+
+                String param = mergeMybatisParam(entry.getValue(), table.getShardingColumns());
+                sb.append(param).append(", @Param(\"size\") Integer size").append(");\n\n");
+            }
         }
         return sb.toString();
     }
 
+    private String getSelect(String tableName) {
+        return "@Select({\"<script>\",\n \"SELECT * FROM `" + tableName + "`";
+    }
 }

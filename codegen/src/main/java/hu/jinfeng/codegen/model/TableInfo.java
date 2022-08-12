@@ -4,6 +4,7 @@ import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author hujinfeng  @Date 2020/11/27
@@ -52,6 +53,30 @@ public class TableInfo {
      */
     List<String> shardingNames = new LinkedList<>();
     List<ColumnInfo> shardingColumns = new LinkedList<>();
+
+    /**
+     * 返回去重后的所有索引字段
+     */
+    public List<ColumnInfo> getAllIndexColumns() {
+        List<ColumnInfo> ret = new LinkedList<>();
+        ret.addAll(pkColumns);
+        List<ColumnInfo> adds = ukColumns.stream().filter(e -> {
+            for (ColumnInfo col : ret) {
+                if (col.getName().equals(e.getName())) return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+        ret.addAll(adds);
+        adds = indexColumns.stream().filter(e -> {
+            for (ColumnInfo col : ret) {
+                if (col.getName().equals(e.getName())) return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+        ret.addAll(adds);
+
+        return ret;
+    }
 
     public boolean hasDateType() {
         if (null != columns) {
