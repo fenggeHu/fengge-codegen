@@ -3,7 +3,7 @@ package hu.jinfeng.codegen.vmhelper;
 import hu.jinfeng.codegen.model.ColumnInfo;
 import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.commons.utils.NameStringUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @Description: 构建mybatis mapper的元素
  * @Author Jinfeng.hu  @Date 2022/8/9
  **/
-@Service
+@Component
 public class MapperHelper extends BaseHelper {
     public String insertColumns(final TableInfo tableInfo) {
         StringBuilder sb = new StringBuilder();
@@ -118,7 +118,7 @@ public class MapperHelper extends BaseHelper {
     /**
      * 构建方法入参
      */
-    public String buildParam(final Collection<ColumnInfo> columns, final Collection<String> excludes) {
+    public String buildMybatisParam(final Collection<ColumnInfo> columns, final Collection<String> excludes) {
         StringBuilder sb = new StringBuilder();
         for (ColumnInfo col : columns) {
             if (null != excludes && excludes.contains(col.getName())) continue;
@@ -140,8 +140,8 @@ public class MapperHelper extends BaseHelper {
     }
 
     public String indexParams(final TableInfo table) {
-        String param = buildParam(table.getIndexColumns(), null);
-        String sharding = buildParam(table.getShardingColumns(), table.getIndexNames());
+        String param = buildMybatisParam(table.getIndexColumns(), null);
+        String sharding = buildMybatisParam(table.getShardingColumns(), table.getIndexNames());
         return sharding.length() == 0 ? param : param + " \n, " + sharding;
     }
 
@@ -153,8 +153,8 @@ public class MapperHelper extends BaseHelper {
     }
 
     public String ukParam(final TableInfo table) {
-        String param = buildParam(table.getUkColumns(), null);
-        String sharding = buildParam(table.getShardingColumns(), table.getUkNames());
+        String param = buildMybatisParam(table.getUkColumns(), null);
+        String sharding = buildMybatisParam(table.getShardingColumns(), table.getUkNames());
         return sharding.length() == 0 ? param : param + " \n, " + sharding;
     }
 
@@ -166,8 +166,8 @@ public class MapperHelper extends BaseHelper {
     }
 
     public String pkParam(final TableInfo table) {
-        String param = buildParam(table.getPkColumns(), null);
-        String sharding = buildParam(table.getShardingColumns(), table.getPkNames());
+        String param = buildMybatisParam(table.getPkColumns(), null);
+        String sharding = buildMybatisParam(table.getShardingColumns(), table.getPkNames());
         return sharding.length() == 0 ? param : param + " \n, " + sharding;
     }
 
@@ -194,8 +194,8 @@ public class MapperHelper extends BaseHelper {
             String method = "selectBy" + NameStringUtils.toClassName(index);
             sb.append(method).append("(");
 
-            String param = buildParam(entry.getValue(), null);
-            String shardingParam = buildParam(table.getShardingColumns(), names);
+            String param = buildMybatisParam(entry.getValue(), null);
+            String shardingParam = buildMybatisParam(table.getShardingColumns(), names);
             param = shardingParam.length() == 0 ? param : param + " \n, " + shardingParam;
             sb.append(param).append(", @Param(\"size\") Integer size").append(");\n\n");
         }

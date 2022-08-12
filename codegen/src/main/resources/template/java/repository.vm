@@ -51,8 +51,8 @@ public class ${repositoryClassName} {
     /**
      * PrimaryKey查询
      */
-    public ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end ${pkColumn.javaType} $_name.toPropertyName(${pkColumn.name}) #end){
-        return ${mapper}.selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end $_name.toPropertyName(${pkColumn.name}) #end);
+    public ${entityClassName} selectByPrimaryKey($_repository.pkParam($tableInfo)){
+        return ${mapper}.selectByPrimaryKey($_repository.pkArgs($tableInfo));
     }
 
 #if($tableInfo.indexColumns.size() >1)

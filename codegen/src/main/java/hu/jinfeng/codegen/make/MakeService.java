@@ -4,6 +4,7 @@ import com.google.googlejavaformat.java.Formatter;
 import hu.jinfeng.codegen.config.MakeConfig;
 import hu.jinfeng.codegen.vmhelper.MapperHelper;
 import hu.jinfeng.codegen.model.DBHelper;
+import hu.jinfeng.codegen.vmhelper.RepositoryHelper;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
 import hu.jinfeng.commons.utils.StringUtil;
@@ -28,6 +29,8 @@ public class MakeService {
     private DBHelper dbHelper;
     @Autowired
     private MapperHelper mapperHelper;
+    @Autowired
+    private RepositoryHelper repositoryHelper;
     @Resource
     private MakeConfig makeConfig;
 
@@ -65,6 +68,7 @@ public class MakeService {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_name", new NameStringUtils());
         vmContext.put("_mapper", mapperHelper);
+        vmContext.put("_repository", repositoryHelper);
         vmContext.put("_stringUtil", new StringUtil());
         String entityClassName = NameStringUtils.toClassName(mapperHelper.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
         vmContext.put("entityClassName", entityClassName);
