@@ -82,9 +82,6 @@ public class MapperHelper extends BaseHelper {
         return sb.toString();
     }
 
-    /**
-     * 构建where条件
-     */
     public String buildWhere(final Collection<String> names, final Collection<String> excludes) {
         StringBuilder sb = new StringBuilder();
         for (String col : names) {
@@ -100,12 +97,55 @@ public class MapperHelper extends BaseHelper {
     }
 
     /**
-     * 构建test where条件
+     * 构建where条件
      */
+    public String mergeWhere(final Collection<String> names, final Collection<String> names2) {
+        StringBuilder sb = new StringBuilder();
+        for (String col : names) {
+            if (sb.length() > 0) {
+                sb.append(" AND ");
+            }
+            String prop = NameStringUtils.toPropertyName(col);
+            sb.append("`").append(col).append("` = #{").append(prop).append("} ");
+        }
+        for (String col : names2) {
+            if (names.contains(col)) continue;
+            if (sb.length() > 0) {
+                sb.append(" AND ");
+            }
+            String prop = NameStringUtils.toPropertyName(col);
+            sb.append("`").append(col).append("` = #{").append(prop).append("} ");
+        }
+
+        return sb.toString();
+    }
+
     public String buildTestWhere(final Collection<String> names, final Collection<String> excludes) {
         StringBuilder sb = new StringBuilder();
         for (String col : names) {
             if (null != excludes && excludes.contains(col)) continue;
+            if (sb.length() > 0) sb.append(", ");
+            String prop = NameStringUtils.toPropertyName(col);
+            sb.append("\"<if test='").append(prop).append(" != null'> AND `")
+                    .append(col).append("` = #{").append(prop).append("} </if> \"\n");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 构建test where条件
+     */
+    public String mergeTestWhere(final Collection<String> names, final Collection<String> names2) {
+        StringBuilder sb = new StringBuilder();
+        for (String col : names) {
+            if (sb.length() > 0) sb.append(", ");
+            String prop = NameStringUtils.toPropertyName(col);
+            sb.append("\"<if test='").append(prop).append(" != null'> AND `")
+                    .append(col).append("` = #{").append(prop).append("} </if> \"\n");
+        }
+        for (String col : names2) {
+            if (names.contains(col)) continue;
             if (sb.length() > 0) sb.append(", ");
             String prop = NameStringUtils.toPropertyName(col);
             sb.append("\"<if test='").append(prop).append(" != null'> AND `")
@@ -130,45 +170,51 @@ public class MapperHelper extends BaseHelper {
         return sb.toString();
     }
 
+    public String mergeMybatisParam(final Collection<ColumnInfo> columns, final Collection<ColumnInfo> columns2) {
+        StringBuilder sb = new StringBuilder();
+        for (ColumnInfo col : columns) {
+            if (sb.length() > 0) sb.append(", ");
+            String prop = NameStringUtils.toPropertyName(col.getName());
+            sb.append("@Param(\"").append(prop).append("\") ").append(col.getJavaType()).append(" ").append(prop);
+        }
+        List<String> names = columns.stream().map(e -> e.getName()).collect(Collectors.toList());
+        for (ColumnInfo col : columns2) {
+            if (names.contains(col.getName())) continue;
+            if (sb.length() > 0) sb.append(", ");
+            String prop = NameStringUtils.toPropertyName(col.getName());
+            sb.append("@Param(\"").append(prop).append("\") ").append(col.getJavaType()).append(" ").append(prop);
+        }
+
+        return sb.toString();
+    }
+
     /**
      * 分库分表、主键、索引字段组合成where条件
      */
     public String indexWhere(final TableInfo table) {
-        String cond = buildTestWhere(table.getIndexNames(), null);
-        String sharding = buildTestWhere(table.getShardingNames(), table.getIndexNames());
-        return sharding.length() == 0 ? cond : cond + " \n, " + sharding;
+        return mergeTestWhere(table.getIndexNames(), table.getShardingNames());
     }
 
     public String indexParams(final TableInfo table) {
-        String param = buildMybatisParam(table.getIndexColumns(), null);
-        String sharding = buildMybatisParam(table.getShardingColumns(), table.getIndexNames());
-        return sharding.length() == 0 ? param : param + " \n, " + sharding;
+        return mergeMybatisParam(table.getIndexColumns(), table.getShardingColumns());
     }
 
     public String ukWhere(final TableInfo table) {
-        String cond = buildWhere(table.getUkNames(), null);
-        String sharding = buildWhere(table.getShardingNames(), table.getUkNames());
-        cond = sharding.length() == 0 ? cond : cond + " AND " + sharding;
+        String cond = mergeWhere(table.getUkNames(), table.getShardingNames());
         return cond.length() == 0 ? "" : " WHERE " + cond;
     }
 
     public String ukParam(final TableInfo table) {
-        String param = buildMybatisParam(table.getUkColumns(), null);
-        String sharding = buildMybatisParam(table.getShardingColumns(), table.getUkNames());
-        return sharding.length() == 0 ? param : param + " \n, " + sharding;
+        return mergeMybatisParam(table.getUkColumns(), table.getShardingColumns());
     }
 
     public String pkWhere(final TableInfo table) {
-        String cond = buildWhere(table.getPkNames(), null);
-        String sharding = buildWhere(table.getShardingNames(), table.getPkNames());
-        cond = sharding.length() == 0 ? cond : cond + " AND " + sharding;
+        String cond = mergeWhere(table.getPkNames(), table.getShardingNames());
         return cond.length() == 0 ? "" : " WHERE " + cond;
     }
 
     public String pkParam(final TableInfo table) {
-        String param = buildMybatisParam(table.getPkColumns(), null);
-        String sharding = buildMybatisParam(table.getShardingColumns(), table.getPkNames());
-        return sharding.length() == 0 ? param : param + " \n, " + sharding;
+        return mergeMybatisParam(table.getPkColumns(), table.getShardingColumns());
     }
 
     public String genAllSqlWithIndex(final TableInfo table) {
@@ -185,18 +231,14 @@ public class MapperHelper extends BaseHelper {
                     .append("@Select({\"<script>\",\n \"SELECT * FROM `")
                     .append(table.getName()).append("` WHERE 1=1 \",");
             List<String> names = entry.getValue().stream().map(e -> e.getName()).collect(Collectors.toList());
-            String cond = buildTestWhere(names, null);
-            String sharding = buildTestWhere(table.getShardingNames(), names);
-            cond = sharding.length() == 0 ? cond : cond + " \n, " + sharding;
+            String cond = mergeTestWhere(names, table.getShardingNames());
             sb.append(cond).append(",\" limit #{size} </script>\"").append("\n})\n")
                     .append("List<").append(entityClassName).append("> ");
 
             String method = "selectBy" + NameStringUtils.toClassName(index);
             sb.append(method).append("(");
 
-            String param = buildMybatisParam(entry.getValue(), null);
-            String shardingParam = buildMybatisParam(table.getShardingColumns(), names);
-            param = shardingParam.length() == 0 ? param : param + " \n, " + shardingParam;
+            String param = mergeMybatisParam(entry.getValue(), table.getShardingColumns());
             sb.append(param).append(", @Param(\"size\") Integer size").append(");\n\n");
         }
         return sb.toString();
