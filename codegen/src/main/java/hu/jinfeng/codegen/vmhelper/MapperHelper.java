@@ -3,6 +3,7 @@ package hu.jinfeng.codegen.vmhelper;
 import hu.jinfeng.codegen.model.ColumnInfo;
 import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.commons.utils.NameStringUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,18 +14,8 @@ import java.util.stream.Collectors;
  * @Description: 构建mybatis mapper的元素
  * @Author Jinfeng.hu  @Date 2022/8/9
  **/
-public class MapperHelper {
-    /**
-     * 字符太长了加入换行
-     */
-    private int newLine(final StringBuilder sb, int start) {
-        if (sb.length() - start > 80) {
-            sb.append("\"+\n\"");
-            start = sb.length();
-        }
-        return start;
-    }
-
+@Service
+public class MapperHelper extends BaseHelper {
     public String insertColumns(final TableInfo tableInfo) {
         StringBuilder sb = new StringBuilder();
         int start = 0;
@@ -178,6 +169,11 @@ public class MapperHelper {
         String param = buildParam(table.getPkColumns(), null);
         String sharding = buildParam(table.getShardingColumns(), table.getPkNames());
         return sharding.length() == 0 ? param : param + " \n, " + sharding;
+    }
+
+    public String genAllSqlWithIndex(final TableInfo table) {
+        String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(table.getName().toLowerCase()));
+        return genAllSqlWithIndex(table, entityClassName);
     }
 
     public String genAllSqlWithIndex(final TableInfo table, String entityClassName) {

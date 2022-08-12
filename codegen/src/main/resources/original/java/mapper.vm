@@ -103,7 +103,7 @@ ${entityClassName} selectOneByUniqueKey($_mapper.ukParam(${tableInfo}));
 List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}), @Param("size") Integer size);
 #end
 
-$_mapper.genAllSqlWithIndex(${tableInfo},${entityClassName})
+$_mapper.genAllSqlWithIndex(${tableInfo})
 
 #if($tableInfo.indexColumns.size() >1)
 /**

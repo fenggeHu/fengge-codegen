@@ -26,16 +26,11 @@ import java.util.Map;
 public class MakeService {
     @Autowired
     private DBHelper dbHelper;
+    @Autowired
+    private MapperHelper mapperHelper;
     @Resource
     private MakeConfig makeConfig;
 
-    private String getBaseClassName(String tableName) {
-        if (StringUtils.isNotBlank(makeConfig.getTablePrefixRemove())
-                && tableName.toLowerCase().startsWith(makeConfig.getTablePrefixRemove().toLowerCase())) {
-            return tableName.substring(makeConfig.getTablePrefixRemove().length());
-        }
-        return tableName;
-    }
 
     /**
      * 生成代码
@@ -69,9 +64,9 @@ public class MakeService {
 
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_name", new NameStringUtils());
-        vmContext.put("_mapper", new MapperHelper());
+        vmContext.put("_mapper", mapperHelper);
         vmContext.put("_stringUtil", new StringUtil());
-        String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
+        String entityClassName = NameStringUtils.toClassName(mapperHelper.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
         vmContext.put("entityClassName", entityClassName);
         vmContext.put("entityPropertyName", NameStringUtils.toPropertyName(entityClassName));
         //1，生产entity对象
