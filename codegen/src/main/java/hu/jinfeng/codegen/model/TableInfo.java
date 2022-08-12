@@ -3,9 +3,7 @@ package hu.jinfeng.codegen.model;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author hujinfeng  @Date 2020/11/27
@@ -33,8 +31,9 @@ public class TableInfo {
     List<ColumnInfo> updateColumns = new LinkedList<>();
 
     /**
-     * index columns
+     * index columns - 把多个索引分开
      */
+    Map<String, List<ColumnInfo>> indexMap = new HashMap<>();
     List<String> indexNames = new LinkedList<>();
     List<ColumnInfo> indexColumns = new LinkedList<>();
     /**
@@ -43,7 +42,7 @@ public class TableInfo {
     List<String> pkNames = new LinkedList<>();
     List<ColumnInfo> pkColumns = new LinkedList<>();
     /**
-     * unique字段 - uk可能有多个联合
+     * unique字段 - uk可能有多个字段联合 - 不考虑一个表有多个uk的情况
      **/
     List<String> ukNames = new LinkedList<>();
     List<ColumnInfo> ukColumns = new LinkedList<>();
@@ -64,6 +63,7 @@ public class TableInfo {
         }
         return false;
     }
+
     public boolean hasDateInIndex() {
         if (null != indexColumns) {
             for (ColumnInfo columnInfo : indexColumns) {
@@ -74,6 +74,7 @@ public class TableInfo {
         }
         return false;
     }
+
     public boolean hasTimestampType() {
         if (null != columns) {
             for (ColumnInfo columnInfo : columns) {
@@ -84,6 +85,7 @@ public class TableInfo {
         }
         return false;
     }
+
     public boolean hasTimestampInIndex() {
         if (null != indexColumns) {
             for (ColumnInfo columnInfo : indexColumns) {
@@ -97,12 +99,13 @@ public class TableInfo {
 
     /**
      * 拿到第一个自增字段（暂不考虑多个自增字段）
+     *
      * @return
      */
-    public ColumnInfo getAutoIncrementField(){
-        if(CollectionUtils.isEmpty(columns)) return null;
+    public ColumnInfo getAutoIncrementField() {
+        if (CollectionUtils.isEmpty(columns)) return null;
         for (ColumnInfo columnInfo : columns) {
-            if(columnInfo.isAutoIncrement()) return columnInfo;
+            if (columnInfo.isAutoIncrement()) return columnInfo;
         }
 
         return null;
@@ -112,9 +115,9 @@ public class TableInfo {
      * 字段名查字段信息
      */
     public ColumnInfo getColumnInfo(String colName) {
-        if(CollectionUtils.isEmpty(columns)) return null;
+        if (CollectionUtils.isEmpty(columns)) return null;
         for (ColumnInfo columnInfo : columns) {
-            if(columnInfo.getName().equalsIgnoreCase(colName)) {
+            if (columnInfo.getName().equalsIgnoreCase(colName)) {
                 return columnInfo;
             }
         }

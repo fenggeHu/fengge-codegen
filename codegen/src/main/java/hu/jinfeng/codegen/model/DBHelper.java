@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -94,13 +95,14 @@ public class DBHelper {
         table.setName(tableName);
         table.setDatabase(database);
 
-        ResultSet tableInfo = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
-        tableInfo.next();
+        ResultSet rs = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
+        rs.next();
         // 数据库的连接参数必须加上remarks=true&useInformationSchema=true才能读取到REMARKS
-        table.setRemarks(tableInfo.getString("REMARKS"));
+        table.setRemarks(rs.getString("REMARKS"));
         ResultSet resultSet = metaData.getColumns(database, "%", tableName, "%");
         this.fillColumns(table, resultSet);
 
+        // pk
         ResultSet pkRS = metaData.getPrimaryKeys(database, null, tableName);
         while (pkRS.next()) {
             String colName = pkRS.getString("COLUMN_NAME");
@@ -109,23 +111,41 @@ public class DBHelper {
             table.getPkColumns().add(columnInfo);
         }
 
+        // uk 只考虑只有一个uk索引的情况
         ResultSet ukRs = metaData.getIndexInfo(database, null, tableName, true, false);
         while (ukRs.next()) {
             String colName = ukRs.getString("COLUMN_NAME");
+            String indexName = ukRs.getString("INDEX_NAME");
+            // 排除 PRIMARY
+            if ("PRIMARY".equalsIgnoreCase(indexName)) continue;
+            // ukRs.getInt("NON_UNIQUE")
+            // ukRs.getString("INDEX_NAME")
             ColumnInfo columnInfo = table.getColumnInfo(colName);
             table.getUkNames().add(colName);
             table.getUkColumns().add(columnInfo);
         }
 
+        // 所有普通索引 - NON_UNIQUE = 1
         ResultSet index = metaData.getIndexInfo(database, "%", tableName, false, false);
         while (index.next()) {
+            int nonUnique = index.getInt("NON_UNIQUE");
+            if (1 != nonUnique) continue;   //  只要普通索引
             String colName = index.getString("COLUMN_NAME");
-            if (table.getIndexNames().contains(colName)) continue;
+            String indexName = index.getString("INDEX_NAME");
+            List<ColumnInfo> list = table.getIndexMap().get(indexName);
+            if (null == list) {
+                list = new LinkedList<>();
+                table.getIndexMap().put(indexName, list);
+            }
             ColumnInfo columnInfo = table.getColumnInfo(colName);
+            list.add(columnInfo);
+
+            if (table.getIndexNames().contains(colName)) continue;
             table.getIndexNames().add(colName);
             table.getIndexColumns().add(columnInfo);
         }
 
+        // 更新字段
         for (ColumnInfo col : table.getColumns()) {
             //insert
             if (!col.isAutoIncrement() && !makeConfig.isInclude(makeConfig.getInsertExclude(), col.getName())) {
@@ -138,20 +158,20 @@ public class DBHelper {
         }
 
         // 把分库分表的字段可能没有索引，判断加到索引条件
-        for (ColumnInfo col : table.getShardingColumns()) {
-            if (!table.getIndexNames().contains(col.getName())) {
-                table.getIndexNames().add(col.getName());
-                table.getIndexColumns().add(col);
-            }
-            if (!table.getUkNames().contains(col.getName())) {
-                table.getUkNames().add(col.getName());
-                table.getUkColumns().add(col);
-            }
-            if (!table.getPkNames().contains(col.getName())) {
-                table.getPkNames().add(col.getName());
-                table.getPkColumns().add(col);
-            }
-        }
+//        for (ColumnInfo col : table.getShardingColumns()) {
+//            if (!table.getIndexNames().contains(col.getName())) {
+//                table.getIndexNames().add(col.getName());
+//                table.getIndexColumns().add(col);
+//            }
+//            if (!table.getUkNames().contains(col.getName())) {
+//                table.getUkNames().add(col.getName());
+//                table.getUkColumns().add(col);
+//            }
+//            if (!table.getPkNames().contains(col.getName())) {
+//                table.getPkNames().add(col.getName());
+//                table.getPkColumns().add(col);
+//            }
+//        }
 
         return table;
     }

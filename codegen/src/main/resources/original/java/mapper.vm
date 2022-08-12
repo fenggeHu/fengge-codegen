@@ -6,6 +6,9 @@ import ${queryPackage}.${entityClassName}Query;
 #end
 import java.util.Collection;
 import java.util.List;
+#if($tableInfo.hasTimestampType())
+import java.sql.Timestamp;
+#end
 
 /**
  * ${tableInfo.remarks} - 表名${tableInfo.name}
@@ -34,7 +37,7 @@ public interface ${entityClassName}Mapper {
 " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})" ,
 "</script>"
 })
-void batchInsert(@Param("entities") List<${entityClassName}> entities);
+void batchInsert(@Param("entities") Collection<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
@@ -64,8 +67,8 @@ void batchInsert(@Param("entities") List<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 /** 按PK精确查询 */
-@Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end limit 1")
-${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_name.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_name.toPropertyName(${pkColumn.name}) #end);
+@Select("SELECT * FROM `${tableInfo.name}` $_mapper.pkWhere(${tableInfo}) limit 1")
+${entityClassName} selectByPrimaryKey($_mapper.pkParam(${tableInfo}));
 
 #if($tableInfo.pkColumns.size() == 1)
 #set($pkCol = $tableInfo.pkColumns.get(0))
@@ -82,22 +85,22 @@ List<${entityClassName}> selectByIds(@Param("${pkColProp}s") Collection<$pkCol.j
 #end
 #end
 
-#if($tableInfo.ukColumns.size() > 0)
+#if($tableInfo.ukColumns.size() > $tableInfo.pkColumns.size())
 /**
-* 通过唯一索引精确查询1个返回结果
+* 通过唯一索引精确查询1个返回结果 - FIXME 可能需要修改条件
 */
 @Select("SELECT * FROM `${tableInfo.name}` $_mapper.ukWhere(${tableInfo}) limit 1")
 ${entityClassName} selectOneByUniqueKey($_mapper.ukParam(${tableInfo}));
 #end
 
-#if($tableInfo.indexColumns.size() > $tableInfo.ukColumns.size())
+#if($tableInfo.indexColumns.size() > 1)
 /**
 * 按索引字段查询
 */
-@Select({"SELECT * FROM `${tableInfo.name}`  WHERE 1=1 ",
+@Select({"<script>","SELECT * FROM `${tableInfo.name}`  WHERE 1=1 ",
       $_mapper.indexWhere(${tableInfo}) 
-     ," limit 1000"})
-List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}));
+     ," limit #{size} </script>"})
+List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}), @Param("size") Integer size);
 #end
 
 #if($tableInfo.indexColumns.size() >1)
@@ -109,7 +112,7 @@ List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}));
 #foreach($col in $tableInfo.indexColumns) 
     "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
  #end
-    " LIMIT 1000</script>" })
+    " LIMIT #{pager.pageSize}</script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
 
 /**

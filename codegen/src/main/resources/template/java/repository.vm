@@ -30,8 +30,8 @@ public class ${repositoryClassName} {
     /**
      * 批量插入
      */
-    public void insertBatch(List<${entityClassName}> entities) {
-        ${mapper}.insertBatch(entities);
+    public void batchInsert(List<${entityClassName}> entities) {
+        ${mapper}.batchInsert(entities);
     }
 
     /**

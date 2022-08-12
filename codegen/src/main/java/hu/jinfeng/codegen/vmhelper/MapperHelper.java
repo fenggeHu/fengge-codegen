@@ -4,6 +4,7 @@ import hu.jinfeng.codegen.model.ColumnInfo;
 import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.commons.utils.NameStringUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class MapperHelper {
      * 字符太长了加入换行
      */
     private int newLine(final StringBuilder sb, int start) {
-        if (sb.length() - start > 100) {
+        if (sb.length() - start > 80) {
             sb.append("\"+\n\"");
             start = sb.length();
         }
@@ -90,11 +91,29 @@ public class MapperHelper {
     }
 
     /**
-     * 分库分表、主键、索引字段组合成where条件
+     * 构建where条件
      */
-    public String indexWhere(final TableInfo table) {
+    public String buildWhere(final Collection<String> names, final Collection<String> excludes) {
         StringBuilder sb = new StringBuilder();
-        for (String col : table.getIndexNames()) {
+        for (String col : names) {
+            if (null != excludes && excludes.contains(col)) continue;
+            if (sb.length() > 0) {
+                sb.append(" AND ");
+            }
+            String prop = NameStringUtils.toPropertyName(col);
+            sb.append("`").append(col).append("` = #{").append(prop).append("} ");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 构建test where条件
+     */
+    public String buildTestWhere(final Collection<String> names, final Collection<String> excludes) {
+        StringBuilder sb = new StringBuilder();
+        for (String col : names) {
+            if (null != excludes && excludes.contains(col)) continue;
             if (sb.length() > 0) sb.append(", ");
             String prop = NameStringUtils.toPropertyName(col);
             sb.append("\"<if test='").append(prop).append(" != null'> AND `")
@@ -104,33 +123,13 @@ public class MapperHelper {
         return sb.toString();
     }
 
-    public String indexParams(final TableInfo table) {
+    /**
+     * 构建方法入参
+     */
+    public String buildParam(final Collection<ColumnInfo> columns, final Collection<String> excludes) {
         StringBuilder sb = new StringBuilder();
-        for (ColumnInfo col : table.getIndexColumns()) {
-            if (sb.length() > 0) sb.append(", ");
-            String prop = NameStringUtils.toPropertyName(col.getName());
-            sb.append("@Param(\"").append(prop).append("\") ").append(col.getJavaType()).append(" ").append(prop);
-        }
-
-        return sb.toString();
-    }
-
-    public String ukWhere(final TableInfo table) {
-        if (table.getUkNames().isEmpty()) return "";
-        StringBuilder sb = new StringBuilder();
-        for (String col : table.getUkNames()) {
-            if (sb.length() > 0) {
-                sb.append(" AND ");
-            }
-            sb.append("`").append(col).append("` = #{").append(NameStringUtils.toPropertyName(col)).append("} ");
-        }
-
-        return " WHERE " + sb.toString();
-    }
-
-    public String ukParam(final TableInfo table) {
-        StringBuilder sb = new StringBuilder();
-        for (ColumnInfo col : table.getUkColumns()) {
+        for (ColumnInfo col : columns) {
+            if (null != excludes && excludes.contains(col.getName())) continue;
             if (sb.length() > 0) sb.append(", ");
             String prop = NameStringUtils.toPropertyName(col.getName());
             sb.append("@Param(\"").append(prop).append("\") ").append(col.getJavaType()).append(" ").append(prop);
@@ -140,17 +139,49 @@ public class MapperHelper {
     }
 
     /**
-     * 路由条件
+     * 分库分表、主键、索引字段组合成where条件
      */
-    public String shardingCondition(final TableInfo table) {
-        if (table.getShardingNames().isEmpty()) return "";
-        StringBuilder sb = new StringBuilder();
-        for (String col : table.getShardingNames()) {
-            if (sb.length() > 0) {
-                sb.append(" AND ");
-            }
-            sb.append("`").append(col).append("` = #{").append(NameStringUtils.toPropertyName(col)).append("}");
-        }
-        return "(" + sb + ")";
+    public String indexWhere(final TableInfo table) {
+        String cond = buildTestWhere(table.getIndexNames(), null);
+        String sharding = buildTestWhere(table.getShardingNames(), table.getIndexNames());
+        return sharding.length() == 0 ? cond : cond + " \n, " + sharding;
     }
+
+    public String indexParams(final TableInfo table) {
+        String param = buildParam(table.getIndexColumns(), null);
+        String sharding = buildParam(table.getShardingColumns(), table.getIndexNames());
+        return sharding.length() == 0 ? param : param + " \n, " + sharding;
+    }
+
+    public String ukWhere(final TableInfo table) {
+        String cond = buildWhere(table.getUkNames(), null);
+        String sharding = buildWhere(table.getShardingNames(), table.getUkNames());
+        cond = sharding.length() == 0 ? cond : cond + " \n, " + sharding;
+        return cond.length() == 0 ? "" : " WHERE " + cond;
+    }
+
+    public String ukParam(final TableInfo table) {
+        String param = buildParam(table.getUkColumns(), null);
+        String sharding = buildParam(table.getShardingColumns(), table.getUkNames());
+        return sharding.length() == 0 ? param : param + " \n, " + sharding;
+    }
+
+    public String pkWhere(final TableInfo table) {
+        String cond = buildWhere(table.getPkNames(), null);
+        String sharding = buildWhere(table.getShardingNames(), table.getPkNames());
+        cond = sharding.length() == 0 ? cond : cond + " AND " + sharding;
+        return cond.length() == 0 ? "" : " WHERE " + cond;
+    }
+
+    public String pkParam(final TableInfo table) {
+        String param = buildParam(table.getPkColumns(), null);
+        String sharding = buildParam(table.getShardingColumns(), table.getPkNames());
+        return sharding.length() == 0 ? param : param + " \n, " + sharding;
+    }
+
+    public String genAllSqlWithIndex(final TableInfo table) {
+
+        return null;
+    }
+
 }
