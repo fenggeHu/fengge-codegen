@@ -11,39 +11,41 @@ import java.util.List;
  * ${tableInfo.remarks} - 表名${tableInfo.name}
  **/
 public interface ${entityClassName}Mapper {
-    #if("$!{tableInfo.autoIncrementField}"!="")
-@Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
-    " VALUES($_mapper.insertValues(${tableInfo}))" +
+    #if(${tableInfo.autoIncrementField})
+@Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
+    " VALUES($_mapper.insertValues(${tableInfo}))" ,
     " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
-    )
+    })
     @Options(useGeneratedKeys = true)
     long insert(${entityClassName} entity);
     #else
-@Insert("INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" +
-    " VALUES($_mapper.insertValues(${tableInfo}))" +
+@Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
+    " VALUES($_mapper.insertValues(${tableInfo}))" ,
     " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
-    )
+    })
     void insert(${entityClassName} entity);
     #end
     /** 批量插入 */
-@Insert("<script> " +
-"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo})) VALUES " +
+@Insert({"<script>" ,
+"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo})) VALUES " ,
 "<foreach collection ='entities' item='it' separator =','>" +
 "($_mapper.batchInsertValues(${tableInfo}))" +
-"</foreach>" +
-" ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})" +
+"</foreach>" ,
+" ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})" ,
 "</script>"
-)
+})
 void batchInsert(@Param("entities") List<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
+/** 按pk更新所有字段，可置空字段的值 */
 @Update({"<script>",
 "UPDATE `${tableInfo.name}` SET#foreach($col in $tableInfo.updateColumns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_name.toPropertyName("${col.name}")}#end#end " +
-"WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
+"WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
     "</script>" })
     int update(${entityClassName} entity);
 
+/** 按pk更新有值的字段，只更新入参值不为null的字段 */
 @Update({"<script>",
 "UPDATE `${tableInfo.name}` SET "+
 #foreach($pkName in $tableInfo.pkNames)
@@ -56,31 +58,53 @@ void batchInsert(@Param("entities") List<${entityClassName}> entities);
         "<if test='$_name.toPropertyName(${col.name})!=null'>, `${col.name}`=#{$_name.toPropertyName("${col.name}")}</if>"+ 
     #end
 #end
-" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0),#end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
+" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
     "</script>" })
     int updateSelective(${entityClassName} entity);
 #end
 
 #if($tableInfo.pkColumns.size() > 0)
+/** 按PK精确查询 */
 @Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($pkName in $tableInfo.pkNames) #if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end limit 1")
 ${entityClassName} selectByPrimaryKey(#foreach($pkColumn in $tableInfo.pkColumns) #if(${foreach.index}!=0),#end @Param("$_name.toPropertyName(${pkColumn.name})") ${pkColumn.javaType} $_name.toPropertyName(${pkColumn.name}) #end);
 
+#if($tableInfo.pkColumns.size() == 1)
+#set($pkCol = $tableInfo.pkColumns.get(0))
+#set($pkColProp = $_name.toPropertyName($pkCol.name))
+/** 按PK批量查询 */
 @Select({"<script>",
-    "SELECT * FROM `${tableInfo.name}` WHERE id in ",
-    "<foreach collection='ids' item='it' index='index' open='(' separator=',' close=')'>",
+    "SELECT * FROM `${tableInfo.name}` WHERE `$pkCol.name` in ",
+    "<foreach collection='${pkColProp}s' item='it' index='index' open='(' separator=',' close=')'>",
         "#{it}",
     "</foreach>",
     "</script>"
 })
-List<${entityClassName}> selectByIds(@Param("ids") Collection<Long> ids);
+List<${entityClassName}> selectByIds(@Param("${pkColProp}s") Collection<$pkCol.javaType> ${pkColProp}s);
+#end
 #end
 
 #if($tableInfo.ukColumns.size() > 0)
-@Select("SELECT * FROM `${tableInfo.name}` WHERE #foreach($ukName in $tableInfo.ukNames) #if(${foreach.index}!=0) AND #end `$ukName` = #{$_name.toPropertyName(${ukName})}#end limit 1")
-${entityClassName} selectByUniqueKey(#foreach($ukColumn in $tableInfo.ukColumns) #if(${foreach.index}!=0),#end @Param("$_name.toPropertyName(${ukColumn.name})") ${ukColumn.javaType} $_name.toPropertyName(${ukColumn.name}) #end);
+/**
+* 通过唯一索引精确查询1个返回结果
+*/
+@Select("SELECT * FROM `${tableInfo.name}` $_mapper.ukWhere(${tableInfo}) limit 1")
+${entityClassName} selectOneByUniqueKey($_mapper.ukParam(${tableInfo}));
+#end
+
+#if($tableInfo.indexColumns.size() > $tableInfo.ukColumns.size())
+/**
+* 按索引字段查询
+*/
+@Select({"SELECT * FROM `${tableInfo.name}`  WHERE 1=1 ",
+      $_mapper.indexWhere(${tableInfo}) 
+     ," limit 1000"})
+List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}));
 #end
 
 #if($tableInfo.indexColumns.size() >1)
+/**
+* 按索引字段的Query对象查询
+*/
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
 #foreach($col in $tableInfo.indexColumns) 
@@ -89,6 +113,9 @@ ${entityClassName} selectByUniqueKey(#foreach($ukColumn in $tableInfo.ukColumns)
     " LIMIT 1000</script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
 
+/**
+* 分页查询
+*/
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
 #foreach($col in $tableInfo.indexColumns) 

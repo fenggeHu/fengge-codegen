@@ -3,6 +3,7 @@ package hu.jinfeng.codegen.model;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  **/
 @Data
 public class TableInfo {
-
+    // 表名
     private String name;
 
     private String remarks;
@@ -20,21 +21,22 @@ public class TableInfo {
     /**
      * 所有字段
      */
-    private List<ColumnInfo> columns;
+    List<ColumnInfo> columns = new ArrayList<>();
 
     /**
-     * insert sql
+     * insert字段
      */
-    private List<ColumnInfo> insertColumns;
+    List<ColumnInfo> insertColumns = new LinkedList<>();
     /**
-     * update sql
+     * update字段
      */
-    private List<ColumnInfo> updateColumns;
+    List<ColumnInfo> updateColumns = new LinkedList<>();
+
     /**
      * index columns
      */
-    private List<ColumnInfo> indexColumns = new LinkedList<>();
-
+    List<String> indexNames = new LinkedList<>();
+    List<ColumnInfo> indexColumns = new LinkedList<>();
     /**
      * 主键字段 - pk可能有多个联合
      **/
@@ -45,6 +47,12 @@ public class TableInfo {
      **/
     List<String> ukNames = new LinkedList<>();
     List<ColumnInfo> ukColumns = new LinkedList<>();
+
+    /**
+     * 用于分库分表的字段
+     */
+    List<String> shardingNames = new LinkedList<>();
+    List<ColumnInfo> shardingColumns = new LinkedList<>();
 
     public boolean hasDateType() {
         if (null != columns) {
@@ -91,10 +99,10 @@ public class TableInfo {
      * 拿到第一个自增字段（暂不考虑多个自增字段）
      * @return
      */
-    public String getAutoIncrementField(){
+    public ColumnInfo getAutoIncrementField(){
         if(CollectionUtils.isEmpty(columns)) return null;
         for (ColumnInfo columnInfo : columns) {
-            if(columnInfo.isAutoIncrement()) return columnInfo.getName();
+            if(columnInfo.isAutoIncrement()) return columnInfo;
         }
 
         return null;

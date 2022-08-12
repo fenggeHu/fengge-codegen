@@ -1,7 +1,7 @@
 package hu.jinfeng.codegen.make;
 
 import com.google.googlejavaformat.java.Formatter;
-import hu.jinfeng.codegen.config.MakeCodeConfiguration;
+import hu.jinfeng.codegen.config.MakeConfig;
 import hu.jinfeng.codegen.vmhelper.MapperHelper;
 import hu.jinfeng.codegen.model.DBHelper;
 import hu.jinfeng.commons.utils.FileUtils;
@@ -27,12 +27,12 @@ public class MakeService {
     @Autowired
     private DBHelper dbHelper;
     @Resource
-    private MakeCodeConfiguration makeCodeConfiguration;
+    private MakeConfig makeConfig;
 
     private String getBaseClassName(String tableName) {
-        if (StringUtils.isNotBlank(makeCodeConfiguration.getTablePrefixRemove())
-                && tableName.toLowerCase().startsWith(makeCodeConfiguration.getTablePrefixRemove().toLowerCase())) {
-            return tableName.substring(makeCodeConfiguration.getTablePrefixRemove().length());
+        if (StringUtils.isNotBlank(makeConfig.getTablePrefixRemove())
+                && tableName.toLowerCase().startsWith(makeConfig.getTablePrefixRemove().toLowerCase())) {
+            return tableName.substring(makeConfig.getTablePrefixRemove().length());
         }
         return tableName;
     }
@@ -61,11 +61,11 @@ public class MakeService {
 
     @SneakyThrows
     public boolean execute(MakeContext makeContext) {
-        if (null != makeCodeConfiguration.getEntityInclude()) {
-            makeContext.setEntityCols(Arrays.asList(makeCodeConfiguration.getEntityInclude()));
+        if (null != makeConfig.getEntityInclude()) {
+            makeContext.setEntityCols(Arrays.asList(makeConfig.getEntityInclude()));
         }
-        String templatePath = StringUtils.isNotBlank(makeCodeConfiguration.getTemplatePath()) ?
-                makeCodeConfiguration.getTemplatePath() : VelocityEngineUtils.LOCAL_RESOURCE_PATH;
+        String templatePath = StringUtils.isNotBlank(makeConfig.getTemplatePath()) ?
+                makeConfig.getTemplatePath() : VelocityEngineUtils.LOCAL_RESOURCE_PATH;
 
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_name", new NameStringUtils());
@@ -79,7 +79,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(templatePath + "/original/java/entity.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-                String path = makeCodeConfiguration.getCodeOutputPath() +
+                String path = makeConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getEntityPackage()) + "/" + entityClassName + ".java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
@@ -90,7 +90,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(templatePath + "/original/java/query.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-                String path = makeCodeConfiguration.getCodeOutputPath() +
+                String path = makeConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getQueryPackage()) + "/" + entityClassName + "Query.java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
@@ -101,7 +101,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(templatePath + "/original/java/mapper.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-                String path = makeCodeConfiguration.getCodeOutputPath() +
+                String path = makeConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
                 try {
                     FileUtils.writeFile(path, new Formatter().formatSource(content.replace("  ", " ").replace("  ", " ")));
@@ -115,7 +115,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(templatePath + "/template/java/repository.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-                String path = makeCodeConfiguration.getCodeOutputPath() +
+                String path = makeConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getRepositoryPackage()) + "/" + entityClassName + "Repository.java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
@@ -126,7 +126,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(templatePath + "/original/java/param.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-                String path = makeCodeConfiguration.getCodeOutputPath() +
+                String path = makeConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getParamPackage()) + "/" + entityClassName + "Param.java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
@@ -136,7 +136,7 @@ public class MakeService {
             String vm = FileUtils.readLocalFile(templatePath + "/original/java/controller.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-                String path = makeCodeConfiguration.getCodeOutputPath() +
+                String path = makeConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getControllerPackage()) + "/" + entityClassName + "Controller.java";
                 FileUtils.writeFile(path, new Formatter().formatSource(content));
             }
@@ -145,7 +145,7 @@ public class MakeService {
         String vm = FileUtils.readLocalFile(templatePath + "/original/java/application.vm");
         if (null != vm) {
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
-            String path = makeCodeConfiguration.getCodeOutputPath() +
+            String path = makeConfig.getCodeOutputPath() +
                     FileUtils.package2Path(makeContext.getBasePackage()) + "/Application.java";
             FileUtils.writeFile(path, new Formatter().formatSource(content));
         }

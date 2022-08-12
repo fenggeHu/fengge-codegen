@@ -1,6 +1,6 @@
 package hu.jinfeng.codegen.model;
 
-import hu.jinfeng.codegen.config.MakeCodeConfiguration;
+import hu.jinfeng.codegen.config.MakeConfig;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author hujinfeng  @Date 2020/11/27
@@ -32,9 +30,7 @@ public class DBHelper {
     @Value("${spring.datasource.password}")
     private String password;
     @Autowired
-    private MakeCodeConfiguration makeCodeConfiguration;
-
-//    private DataSource dataSource = null;
+    private MakeConfig makeConfig;
 
     public DatabaseMetaData getDatabaseMetaData() throws Exception {
         return getConnection().getMetaData();
@@ -55,20 +51,14 @@ public class DBHelper {
             table.setName(rs.getString("TABLE_NAME"));
             table.setRemarks(rs.getString("REMARKS"));
 
-            ResultSet columns = metaData.getColumns(database, "%", table.getName(), "%");
-            this.fillColumns(table, columns);
+            ResultSet resultSet = metaData.getColumns(database, "%", table.getName(), "%");
+            this.fillColumns(table, resultSet);
         }
 
         return result;
     }
 
     private void fillColumns(final TableInfo table, ResultSet columns) throws SQLException {
-        List<ColumnInfo> fields = new ArrayList<>();
-        List<ColumnInfo> insertFields = new ArrayList<>();
-        List<ColumnInfo> updateFields = new ArrayList<>();
-        table.setColumns(fields);
-        table.setInsertColumns(insertFields);
-        table.setUpdateColumns(updateFields);
         while (columns.next()) {
             ColumnInfo columnInfo = ColumnInfo.builder()
                     .name(columns.getString("COLUMN_NAME"))
@@ -84,41 +74,13 @@ public class DBHelper {
                     .defaultValue(columns.getString("COLUMN_DEF"))
                     .build();
 
-            // pk
-            if (table.getPkNames().contains(columnInfo.getName())) {
-                table.getPkColumns().add(columnInfo);
+            // sharding field
+            if (makeConfig.isShardingField(columnInfo.getName())) {
+                table.shardingNames.add(columnInfo.getName());
+                table.shardingColumns.add(columnInfo);
             }
-            // uk
-            if (table.getUkNames().contains(columnInfo.getName())) {
-                table.getUkColumns().add(columnInfo);
-            }
-            fields.add(columnInfo);
-            //insert
-            if (makeCodeConfiguration.getInsertExclude() == null) {
-                insertFields.add(columnInfo);
-            } else {
-                boolean exc = false;
-                for (String exclude : makeCodeConfiguration.getInsertExclude()) {
-                    if (exclude.equalsIgnoreCase(columnInfo.getName())) {
-                        exc = true;
-                        break;
-                    }
-                }
-                if (!exc) insertFields.add(columnInfo);
-            }
-            //update
-            if (makeCodeConfiguration.getUpdateExclude() == null) {
-                updateFields.add(columnInfo);
-            } else {
-                boolean exc = false;
-                for (String exclude : makeCodeConfiguration.getUpdateExclude()) {
-                    if (exclude.equalsIgnoreCase(columnInfo.getName())) {
-                        exc = true;
-                        break;
-                    }
-                }
-                if (!exc) updateFields.add(columnInfo);
-            }
+
+            table.getColumns().add(columnInfo);
         }
     }
 
@@ -136,43 +98,67 @@ public class DBHelper {
         tableInfo.next();
         // 数据库的连接参数必须加上remarks=true&useInformationSchema=true才能读取到REMARKS
         table.setRemarks(tableInfo.getString("REMARKS"));
+        ResultSet resultSet = metaData.getColumns(database, "%", tableName, "%");
+        this.fillColumns(table, resultSet);
 
         ResultSet pkRS = metaData.getPrimaryKeys(database, null, tableName);
         while (pkRS.next()) {
-            table.getPkNames().add(pkRS.getString("COLUMN_NAME"));
+            String colName = pkRS.getString("COLUMN_NAME");
+            ColumnInfo columnInfo = table.getColumnInfo(colName);
+            table.getPkNames().add(colName);
+            table.getPkColumns().add(columnInfo);
         }
 
         ResultSet ukRs = metaData.getIndexInfo(database, null, tableName, true, false);
         while (ukRs.next()) {
-            String cn = ukRs.getString("COLUMN_NAME");
-            if (table.getPkNames().contains(cn)) continue;
-            table.getUkNames().add(cn);
+            String colName = ukRs.getString("COLUMN_NAME");
+            ColumnInfo columnInfo = table.getColumnInfo(colName);
+            table.getUkNames().add(colName);
+            table.getUkColumns().add(columnInfo);
         }
 
-        ResultSet columns = metaData.getColumns(database, "%", tableName, "%");
-        this.fillColumns(table, columns);
-
-        List<ColumnInfo> indexColumns = new LinkedList<>();
         ResultSet index = metaData.getIndexInfo(database, "%", tableName, false, false);
         while (index.next()) {
             String colName = index.getString("COLUMN_NAME");
+            if (table.getIndexNames().contains(colName)) continue;
             ColumnInfo columnInfo = table.getColumnInfo(colName);
-            indexColumns.add(columnInfo);
+            table.getIndexNames().add(colName);
+            table.getIndexColumns().add(columnInfo);
         }
-        table.getIndexColumns().addAll(indexColumns.stream().distinct().collect(Collectors.toList()));
+
+        for (ColumnInfo col : table.getColumns()) {
+            //insert
+            if (!col.isAutoIncrement() && !makeConfig.isInclude(makeConfig.getInsertExclude(), col.getName())) {
+                table.getInsertColumns().add(col);
+            }
+            //update
+            if (!col.isAutoIncrement() && !makeConfig.isInclude(makeConfig.getUpdateExclude(), col.getName())) {
+                table.getUpdateColumns().add(col);
+            }
+        }
+
+        // 把分库分表的字段可能没有索引，判断加到索引条件
+        for (ColumnInfo col : table.getShardingColumns()) {
+            if (!table.getIndexNames().contains(col.getName())) {
+                table.getIndexNames().add(col.getName());
+                table.getIndexColumns().add(col);
+            }
+            if (!table.getUkNames().contains(col.getName())) {
+                table.getUkNames().add(col.getName());
+                table.getUkColumns().add(col);
+            }
+            if (!table.getPkNames().contains(col.getName())) {
+                table.getPkNames().add(col.getName());
+                table.getPkColumns().add(col);
+            }
+        }
+
         return table;
     }
 
     public Connection getConnection() {
         Connection conn = null;
         try {
-            //连接数据库
-//            Properties props = new Properties();
-////            props.put("remarksReporting", "true");
-//            props.put("user", username);
-//            props.put("password", password);
-//            conn = DriverManager.getConnection(dbUrl, props);
-
             conn = DriverManager.getConnection(dbUrl, username, password);
             conn.setAutoCommit(true);
         } catch (SQLException e) {
@@ -180,37 +166,4 @@ public class DBHelper {
         }
         return conn;
     }
-
-//    public Connection getConnection() throws Exception {
-//        if (dataSource == null) {
-//            dataSource = getDruidDataSource();
-//        }
-//        return dataSource.getConnection();
-//    }
-//
-//    public DruidDataSource getDruidDataSource() {
-//        DruidDataSource dataSource = new DruidDataSource();
-//
-//        dataSource.setUrl(dbUrl);
-//        dataSource.setDriverClassName(driverClassName);
-//        dataSource.setUsername(username);
-//        dataSource.setPassword(password);
-//
-//        dataSource.setInitialSize(1);
-//        dataSource.setMinIdle(1);
-//        dataSource.setMaxActive(20);
-//        dataSource.setRemoveAbandoned(true);
-//        dataSource.setRemoveAbandonedTimeout(30);
-//        //配置获取连接等待超时的时间
-//        dataSource.setMaxWait(20000);
-//        //配置间隔多久(毫秒)才进行一次检测，检测需要关闭的空闲连接
-//        dataSource.setTimeBetweenEvictionRunsMillis(20000);
-//        //防止过期
-//        dataSource.setValidationQuery("SELECT 'x'");
-//        dataSource.setTestWhileIdle(true);
-//        dataSource.setTestOnBorrow(true);
-//        // 建立了连接
-//        return dataSource;
-//    }
-
 }
