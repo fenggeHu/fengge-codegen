@@ -45,11 +45,6 @@ public class MakeConfig {
      */
     @Value("${entity.column.include:}")
     private String[] entityInclude;
-    /**
-     * 分库分表字段
-     */
-    @Value("${table.sharding.fields:}")
-    private String[] shardingFields;
 
     public String getCodeOutputPath() {
         String resource = this.getClass().getResource("/").getPath();
@@ -65,7 +60,4 @@ public class MakeConfig {
         return false;
     }
 
-    public boolean isShardingField(String field) {
-        return isInclude(shardingFields, field);
-    }
 }

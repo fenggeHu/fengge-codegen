@@ -22,12 +22,13 @@
         <maven.compiler.source>8</maven.compiler.source>
         <java.version>8</java.version>
         <skipTests>true</skipTests>
-        <spring.boot.version>2.3.11.RELEASE</spring.boot.version>
+        <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <druid.version>1.1.14</druid.version>
         <mysql.connector.version>8.0.27</mysql.connector.version>
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
         <mybatis-plus.version>3.3.1.tmp</mybatis-plus.version>
         <mvel2.version>2.4.10.Final</mvel2.version>
+        <google-java-format.version>1.15.0</google-java-format.version>
     </properties>
 
     <dependencyManagement>
@@ -85,7 +86,7 @@
             <dependency>
                 <groupId>com.google.googlejavaformat</groupId>
                 <artifactId>google-java-format</artifactId>
-                <version>1.8</version>
+                <version>${google-java-format.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

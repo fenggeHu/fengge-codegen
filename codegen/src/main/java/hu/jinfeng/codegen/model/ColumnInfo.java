@@ -55,10 +55,29 @@ public class ColumnInfo {
      * 是否可为空
      */
     private boolean nullAble;
+
     /**
      * 字段类型转java类型
      */
     public String getJavaType() {
         return TypeDBAndJava.getJavaType(this.dbType, this.type);
     }
+
+    /**
+     * 分库分表
+     * - 在字段的备注中加入注解标记是否分库或分表字段。
+     * - eg: 分库字段 @{shardingDB} ； 分表字段 @{shardingTable}
+     */
+    public boolean isShardingDB() {
+        return null == this.remarks ? false : (this.remarks.contains("@{shardingDB}"));
+    }
+
+    public boolean isShardingTable() {
+        return null == this.remarks ? false : (this.remarks.contains("@{shardingTable}"));
+    }
+
+    public boolean isShardingField() {
+        return isShardingDB() || isShardingTable();
+    }
+
 }

@@ -75,7 +75,7 @@ public class DBHelper {
                     .build();
 
             // sharding field
-            if (makeConfig.isShardingField(columnInfo.getName())) {
+            if (columnInfo.isShardingField()) {
                 table.shardingNames.add(columnInfo.getName());
                 table.shardingColumns.add(columnInfo);
             }
