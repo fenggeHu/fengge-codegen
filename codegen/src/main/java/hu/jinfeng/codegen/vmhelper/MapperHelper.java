@@ -6,6 +6,7 @@ import hu.jinfeng.commons.utils.NameStringUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -179,9 +180,30 @@ public class MapperHelper {
         return sharding.length() == 0 ? param : param + " \n, " + sharding;
     }
 
-    public String genAllSqlWithIndex(final TableInfo table) {
+    public String genAllSqlWithIndex(final TableInfo table, String entityClassName) {
+        if (table.getIndexMap().isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<ColumnInfo>> entry : table.getIndexMap().entrySet()) {
+            String index = entry.getKey();
+            sb.append("/** 按索引 ").append(index).append(" 查询 */\n")
+                    .append("@Select({\"<script>\",\n \"SELECT * FROM `")
+                    .append(table.getName()).append("` WHERE 1=1 \",");
+            List<String> names = entry.getValue().stream().map(e -> e.getName()).collect(Collectors.toList());
+            String cond = buildTestWhere(names, null);
+            String sharding = buildTestWhere(table.getShardingNames(), names);
+            cond = sharding.length() == 0 ? cond : cond + " \n, " + sharding;
+            sb.append(cond).append(",\" limit #{size} </script>\"").append("\n})\n")
+                    .append("List<").append(entityClassName).append("> ");
 
-        return null;
+            String method = "selectBy" + NameStringUtils.toClassName(index);
+            sb.append(method).append("(");
+
+            String param = buildParam(entry.getValue(), null);
+            String shardingParam = buildParam(table.getShardingColumns(), names);
+            param = shardingParam.length() == 0 ? param : param + " \n, " + shardingParam;
+            sb.append(param).append(", @Param(\"size\") Integer size").append(");\n\n");
+        }
+        return sb.toString();
     }
 
 }

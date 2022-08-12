@@ -103,6 +103,8 @@ ${entityClassName} selectOneByUniqueKey($_mapper.ukParam(${tableInfo}));
 List<${entityClassName}> selectByIndex($_mapper.indexParams(${tableInfo}), @Param("size") Integer size);
 #end
 
+$_mapper.genAllSqlWithIndex(${tableInfo},${entityClassName})
+
 #if($tableInfo.indexColumns.size() >1)
 /**
 * 按索引字段的Query对象查询
