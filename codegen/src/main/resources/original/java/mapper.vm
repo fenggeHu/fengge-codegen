@@ -39,15 +39,14 @@ void batchInsert(@Param("entities") List<${entityClassName}> entities);
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
 /** 按pk更新所有字段，可置空字段的值 */
-@Update({"<script>",
-"UPDATE `${tableInfo.name}` SET#foreach($col in $tableInfo.updateColumns)#if(!$tableInfo.pkNames.contains(${col.name}))#if($inx>0),#else#set($inx = 1)#end `${col.name}`=#{$_name.toPropertyName("${col.name}")}#end#end " +
-"WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
+@Update({"<script>UPDATE `${tableInfo.name}` SET ",
+" $_mapper.updateSet(${tableInfo}) " +
+" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
     "</script>" })
     int update(${entityClassName} entity);
 
 /** 按pk更新有值的字段，只更新入参值不为null的字段 */
-@Update({"<script>",
-"UPDATE `${tableInfo.name}` SET "+
+@Update({"<script>UPDATE `${tableInfo.name}` SET ",
 #foreach($pkName in $tableInfo.pkNames)
 #if(${foreach.index}==0)
 "`$pkName` = #{$_name.toPropertyName(${pkName})}" +
