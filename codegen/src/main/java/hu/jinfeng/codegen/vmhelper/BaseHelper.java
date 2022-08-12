@@ -1,6 +1,6 @@
 package hu.jinfeng.codegen.vmhelper;
 
-import hu.jinfeng.codegen.config.MakeConfig;
+import hu.jinfeng.codegen.config.MakerConfig;
 import hu.jinfeng.codegen.model.ColumnInfo;
 import hu.jinfeng.commons.utils.NameStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
  **/
 public class BaseHelper {
     @Autowired
-    private MakeConfig makeConfig;
+    private MakerConfig makerConfig;
 
     public String getBaseClassName(String tableName) {
-        if (StringUtils.isNotBlank(makeConfig.getTablePrefixRemove())
-                && tableName.toLowerCase().startsWith(makeConfig.getTablePrefixRemove().toLowerCase())) {
-            return tableName.substring(makeConfig.getTablePrefixRemove().length());
+        if (StringUtils.isNotBlank(makerConfig.getTablePrefixRemove())
+                && tableName.toLowerCase().startsWith(makerConfig.getTablePrefixRemove().toLowerCase())) {
+            return tableName.substring(makerConfig.getTablePrefixRemove().length());
         }
         return tableName;
     }

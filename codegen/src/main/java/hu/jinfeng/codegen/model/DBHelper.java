@@ -1,6 +1,6 @@
 package hu.jinfeng.codegen.model;
 
-import hu.jinfeng.codegen.config.MakeConfig;
+import hu.jinfeng.codegen.config.MakerConfig;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import java.util.List;
  * @Author hujinfeng  @Date 2020/11/27
  **/
 @Configuration
-//@PropertySource("application.properties")
 @Service
 @Slf4j
 public class DBHelper {
@@ -31,7 +30,7 @@ public class DBHelper {
     @Value("${spring.datasource.password}")
     private String password;
     @Autowired
-    private MakeConfig makeConfig;
+    private MakerConfig makerConfig;
 
     public DatabaseMetaData getDatabaseMetaData() throws Exception {
         return getConnection().getMetaData();
@@ -128,8 +127,8 @@ public class DBHelper {
         // 所有普通索引 - NON_UNIQUE = 1
         ResultSet index = metaData.getIndexInfo(database, "%", tableName, false, false);
         while (index.next()) {
-            int nonUnique = index.getInt("NON_UNIQUE");
-            if (1 != nonUnique) continue;   //  只要普通索引
+            boolean nonUnique = index.getBoolean("NON_UNIQUE");
+            if (!nonUnique) continue;   //  只要普通索引
             String colName = index.getString("COLUMN_NAME");
             String indexName = index.getString("INDEX_NAME");
             List<ColumnInfo> list = table.getIndexMap().get(indexName);
@@ -148,11 +147,11 @@ public class DBHelper {
         // 更新字段
         for (ColumnInfo col : table.getColumns()) {
             //insert
-            if (!col.isAutoIncrement() && !makeConfig.isInclude(makeConfig.getInsertExclude(), col.getName())) {
+            if (!col.isAutoIncrement() && !makerConfig.isInclude(makerConfig.getMapperInsertExclude(), col.getName())) {
                 table.getInsertColumns().add(col);
             }
             //update
-            if (!col.isAutoIncrement() && !makeConfig.isInclude(makeConfig.getUpdateExclude(), col.getName())) {
+            if (!col.isAutoIncrement() && !makerConfig.isInclude(makerConfig.getMapperUpdateExclude(), col.getName())) {
                 table.getUpdateColumns().add(col);
             }
         }

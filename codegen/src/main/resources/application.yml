@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: fengge-codegen
+  profiles:
+    active: dev
+  velocity:
+    properties:
+      input:
+        encoding: UTF-8
+      output:
+        encoding: UTF-8
+    suffix: .vm
+
+## 生成代码的配置 - MakerConfig
+maker:
+  table-prefix-remove: tb_
+  mapper-insert-exclude: create_at,update_at,created_at,updated_at
+  mapper-update-exclude: create_at,update_at,created_at,updated_at
+  entity-column-include: status,created_at,updated_at   # 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段，如果不配置该属性将不会继承
+  code-output-path: /codegen-demo/src/main/java/
+  template-path:
+
+server:
+  port: 8080
+  tomcat:
+    remote-ip-header: X-Real-IP
+    protocol-header: X-Forwarded-Proto
+    uri-encoding: UTF-8
+    max-threads: 10
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+logging:
+#  config: classpath:logback-spring.xml
+  level:
+    hu.jinfeng: debug
+    org.springframework: warn
