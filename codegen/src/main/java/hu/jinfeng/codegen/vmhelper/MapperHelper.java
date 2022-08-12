@@ -156,7 +156,7 @@ public class MapperHelper {
     public String ukWhere(final TableInfo table) {
         String cond = buildWhere(table.getUkNames(), null);
         String sharding = buildWhere(table.getShardingNames(), table.getUkNames());
-        cond = sharding.length() == 0 ? cond : cond + " \n, " + sharding;
+        cond = sharding.length() == 0 ? cond : cond + " AND " + sharding;
         return cond.length() == 0 ? "" : " WHERE " + cond;
     }
 

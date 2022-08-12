@@ -87,7 +87,7 @@ List<${entityClassName}> selectByIds(@Param("${pkColProp}s") Collection<$pkCol.j
 
 #if($tableInfo.ukColumns.size() > $tableInfo.pkColumns.size())
 /**
-* 通过唯一索引精确查询1个返回结果 - FIXME 可能需要修改条件
+* 通过唯一索引精确查询1个返回结果 - 按业务规则需要修改条件
 */
 @Select("SELECT * FROM `${tableInfo.name}` $_mapper.ukWhere(${tableInfo}) limit 1")
 ${entityClassName} selectOneByUniqueKey($_mapper.ukParam(${tableInfo}));
