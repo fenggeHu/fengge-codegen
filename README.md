@@ -7,6 +7,7 @@
 # 分库分表
 - 在字段的备注中加入注解标记是否分库或分表字段。
 - eg: 分库字段 @{shardingDB} ； 分表字段 @{shardingTable}
+- sharding-jdbc分布分表配置参考
 
 # 模板生成
 - sql、mybatis、base repository、 controller

@@ -2,6 +2,7 @@ package hu.jinfeng.codegen.make;
 
 import com.google.googlejavaformat.java.Formatter;
 import hu.jinfeng.codegen.config.MakerConfig;
+import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.codegen.vmhelper.MapperHelper;
 import hu.jinfeng.codegen.model.DBHelper;
 import hu.jinfeng.codegen.vmhelper.RepositoryHelper;
@@ -43,6 +44,10 @@ public class MakeService {
      * @param basePackage
      */
     public void execute(String database, String tableName, String basePackage) {
+        TableInfo tableInfo = dbHelper.getTableInfo(database, tableName);
+        if(null == tableInfo){
+            return;
+        }
         MakeContext makeContext = new MakeContext();
         makeContext.setBasePackage(basePackage);
         makeContext.setQueryPackage(basePackage + ".query");
@@ -51,7 +56,7 @@ public class MakeService {
         makeContext.setMapperPackage(basePackage + ".mapper");
         makeContext.setRepositoryPackage(basePackage + ".repository");
         makeContext.setControllerPackage(basePackage + ".controller");
-        makeContext.setTableInfo(dbHelper.getTableInfo(database, tableName));
+        makeContext.setTableInfo(tableInfo);
         log.info("Generate: db:{}, table:{}, package:{}",
                 makeContext.getDatabase(), makeContext.getTableName(), makeContext.getBasePackage());
         this.execute(makeContext);

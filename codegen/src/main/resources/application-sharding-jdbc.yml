@@ -1,0 +1,68 @@
+spring:
+  shardingsphere:
+    props:
+      sql.show: true
+    datasource:
+      names: ds,ds1,ds2,ds3
+      ds:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.8.11:3306/securities?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false
+        username: root
+        password: 123456
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/cn-securities?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false
+        username: root
+        password: 2343545
+      ds2:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/hk-securities?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false
+        username: root
+        password: 1qaz
+      ds3:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/us-securities?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false
+        username: root
+        password: WSX
+
+    # 配置分片规则
+    sharding:
+      default-data-source-name: ds    # 默认库 - 没配置分片规则的表被路由到默认库
+      binding-tables[0]: tb_kline_day   #每张需要分库分表的表都要配置
+      tables:
+        tb_kline_day:     # 按region字段路由库，再按symbol路由表
+          database‐strategy:
+            inline:
+              sharding-column: region
+              algorithm-expression: ds$->{region}     # 路由表达式
+          actual-data-nodes: ds$->{1..3}.tb_kline_day_$->{0..9}
+          table-strategy:
+            inline:
+              sharding-column: symbol
+              algorithm-expression: tb_kline_day_$->{((int)symbol.charAt(symbol.length() - 1)-48)%10}   # 兼容us字母路由
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    sec: debug
+    org.springframework: warn
+
+log:
+  path: /Users/max
+  level: INFO
+
+stock:
+  type: astock
+  outPath: /Users/max/a_stock/
+  realtime:
+    enable: false

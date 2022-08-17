@@ -95,7 +95,11 @@ public class DBHelper {
         table.setDatabase(database);
 
         ResultSet rs = metaData.getTables(database, null, tableName, new String[]{"TABLE"});
-        rs.next();
+        boolean hasNext = rs.next();
+        if (!hasNext) {
+            log.error("表不存在: {}.{}", database, tableName);
+            return null;
+        }
         // 数据库的连接参数必须加上remarks=true&useInformationSchema=true才能读取到REMARKS
         table.setRemarks(rs.getString("REMARKS"));
         ResultSet resultSet = metaData.getColumns(database, "%", tableName, "%");
