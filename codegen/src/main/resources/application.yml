@@ -2,7 +2,7 @@ spring:
   application:
     name: fengge-codegen
   profiles:
-    active: dev
+    active: max
   velocity:
     properties:
       input:

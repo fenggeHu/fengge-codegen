@@ -36,10 +36,11 @@ public class NameStringUtils {
 
     /**
      * 驼峰转下划线
+     *
      * @param name
      * @return
      */
-    public static String toDBColumnName(String name) {
+    public static String toSnakeName(String name) {
         return reverseCamelLowerCase(name);
     }
 
@@ -54,6 +55,8 @@ public class NameStringUtils {
             if (Character.isUpperCase(ch[i])) {
                 if (i > 0) sb.append("_");
                 sb.append(Character.toLowerCase(ch[i]));
+            } else if (ch[i] == '-') {
+                sb.append('_');
             } else {
                 sb.append(ch[i]);
             }
@@ -63,6 +66,7 @@ public class NameStringUtils {
 
     /**
      * 下划线/横线转驼峰
+     *
      * @param name
      * @return
      */
