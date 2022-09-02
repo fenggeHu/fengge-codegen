@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 @RestController
 @Api(tags = "$!{tableInfo.remarks}")
-@RequestMapping("/v1/${entityClassName}")
+@RequestMapping("/v1/$_name.classNameToPropertyName("${entityClassName}")")
 public class ${entityClassName}Controller {
     #set($mapper = $_name.classNameToPropertyName("${entityClassName}Mapper"))
     @Autowired
