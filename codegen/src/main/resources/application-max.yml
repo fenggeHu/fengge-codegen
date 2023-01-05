@@ -2,7 +2,5 @@ spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://172.16.0.76:3308/securities?remarks=true&useInformationSchema=true&serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false
-#    url: jdbc:mysql://172.16.0.76:3308/tsg-api?remarks=true&useInformationSchema=true&serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: 123
-
