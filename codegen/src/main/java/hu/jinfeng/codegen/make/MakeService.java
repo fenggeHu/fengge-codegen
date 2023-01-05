@@ -45,7 +45,7 @@ public class MakeService {
      */
     public void execute(String database, String tableName, String basePackage) {
         TableInfo tableInfo = dbHelper.getTableInfo(database, tableName);
-        if(null == tableInfo){
+        if (null == tableInfo) {
             return;
         }
         MakeContext makeContext = new MakeContext();
@@ -85,7 +85,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getEntityPackage()) + "/" + entityClassName + ".java";
-                FileUtils.writeFile(path, new Formatter().formatSource(content));
+                this.write(path, content);
             }
         }
 
@@ -96,7 +96,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getQueryPackage()) + "/" + entityClassName + "Query.java";
-                FileUtils.writeFile(path, new Formatter().formatSource(content));
+                this.write(path, content);
             }
         }
 
@@ -107,11 +107,8 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
-                try {
-                    FileUtils.writeFile(path, new Formatter().formatSource(content.replace("  ", " ").replace("  ", " ")));
-                } catch (Exception e) {
-                    FileUtils.writeFile(path, content.replace("  ", " ").replace("  ", " "));
-                }
+                content = content.replace("  ", " ").replace("  ", " ");
+                this.write(path, content);
             }
         }
         //3, 生成service
@@ -121,7 +118,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getRepositoryPackage()) + "/" + entityClassName + "Repository.java";
-                FileUtils.writeFile(path, new Formatter().formatSource(content));
+                this.write(path, content);
             }
         }
 
@@ -132,7 +129,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getParamPackage()) + "/" + entityClassName + "Param.java";
-                FileUtils.writeFile(path, new Formatter().formatSource(content));
+                this.write(path, content);
             }
         }
         // controller
@@ -142,7 +139,7 @@ public class MakeService {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
                         FileUtils.package2Path(makeContext.getControllerPackage()) + "/" + entityClassName + "Controller.java";
-                FileUtils.writeFile(path, new Formatter().formatSource(content));
+                this.write(path, content);
             }
         }
         // application
@@ -151,9 +148,18 @@ public class MakeService {
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = makerConfig.getCodeOutputPath() +
                     FileUtils.package2Path(makeContext.getBasePackage()) + "/Application.java";
-            FileUtils.writeFile(path, new Formatter().formatSource(content));
+            this.write(path, content);
         }
 
         return true;
+    }
+
+    private void write(String path, String content) {
+        try {
+            FileUtils.writeFile(path, new Formatter().formatSource(content));
+        } catch (Exception e) {
+            log.warn("Formatter", e);
+            FileUtils.writeFile(path, content);
+        }
     }
 }
