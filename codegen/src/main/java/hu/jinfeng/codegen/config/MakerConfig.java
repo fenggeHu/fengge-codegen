@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 @Component
 @ConfigurationProperties(prefix = "maker")
 public class MakerConfig {
+    // 开/关swagger注解
+    private boolean swagger;
     /**
      * 生成代码的类名删除表前缀
      */

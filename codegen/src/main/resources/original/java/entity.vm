@@ -1,11 +1,17 @@
 package ${entityPackage};
 
 import lombok.Data;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+#if("$!entityCols.length"!="" && $entityCols.length>0)
+import lombok.experimental.SuperBuilder;
+#else
+import lombok.Builder;
+#end
+#if($_useSwagger)
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+#end
 #if("$!entityCols.length"!="" && $entityCols.length>0)
 import plugin.BaseEntity;
 #end
@@ -16,14 +22,25 @@ import java.util.Date;
 import java.sql.Timestamp;
 #end
 
+#if($!tableInfo.remarks =='')
+/** $!{tableInfo.name} */
+#else
+/** $!{tableInfo.remarks} */
+#end
 @Data
+#if("$!entityCols.length"!="" && $entityCols.length>0)
+@SuperBuilder
+#else
 @Builder
+#end
 @NoArgsConstructor
 @AllArgsConstructor
+#if($_useSwagger)
 #if($!tableInfo.remarks =='')
 @ApiModel("$!{tableInfo.name}")
 #else
 @ApiModel("$!{tableInfo.remarks}")
+#end
 #end
 public class ${entityClassName} #if("$!entityCols.length"!="" && $entityCols.length>0) extends BaseEntity #end{
     #foreach($col in $tableInfo.columns)
@@ -33,10 +50,12 @@ public class ${entityClassName} #if("$!entityCols.length"!="" && $entityCols.len
             * $!col.remarks
             */
             #end
+            #if($_useSwagger)
             #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
                 @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
             #else
                 @ApiModelProperty(value = "$_stringUtil.firstLine($!{col.remarks})", hidden = true)
+            #end
             #end
             private $col.javaType $_name.toPropertyName("${col.name}");
         #end

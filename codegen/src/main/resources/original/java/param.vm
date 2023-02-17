@@ -1,8 +1,10 @@
 package ${paramPackage};
 
 import lombok.Data;
+#if($_useSwagger)
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+#end
 #if($tableInfo.hasDateType())
 import java.util.Date;
 #end
@@ -12,10 +14,12 @@ import java.sql.Timestamp;
 import ${entityPackage}.${entityClassName};
 
 @Data
+#if($_useSwagger)
 #if($!tableInfo.remarks =='')
 @ApiModel("$!{tableInfo.name}")
 #else
 @ApiModel("$!{tableInfo.remarks}")
+#end
 #end
 public class ${entityClassName}Param {
     #foreach($col in $tableInfo.columns)
@@ -25,10 +29,12 @@ public class ${entityClassName}Param {
             * $!col.remarks
             */
             #end
+            #if($_useSwagger)
             #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
                 @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
             #else
                 @ApiModelProperty(value = "$_stringUtil.firstLine($!{col.remarks})", hidden = true)
+            #end
             #end
             private $col.javaType $_name.toPropertyName("${col.name}");
         #end

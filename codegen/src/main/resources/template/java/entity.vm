@@ -1,23 +1,29 @@
 package ${entityPackage};
 
 import hu.jinfeng.mybatis.provider.Entity;
+#if($_useSwagger)
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+#end
 import lombok.Data;
 #if($tableInfo.hasDateType())
 import java.util.Date;
 #end
 
 @Data
+#if($_useSwagger)
 @ApiModel("${tableInfo.remarks}")
+#end
 @Entity(table = "${tableInfo.name}", primaryKey = "${tableInfo.pkName}")
 public class ${entityClassName} {
     #foreach($col in $tableInfo.columns)
     /**
         * $!col.remarks
         */
+    #if($_useSwagger)
     #if("" != "$!col.remarks")
     @ApiModelProperty("$!col.remarks")
+    #end
     #end
     private $col.javaType $_name.toPropertyName("${col.name}");
 

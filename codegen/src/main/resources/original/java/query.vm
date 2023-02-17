@@ -1,9 +1,11 @@
 package ${queryPackage};
 
 import plugin.Pager;
+#if($_useSwagger)
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
+#end
 import lombok.Data;
+import lombok.Builder;
 #if($tableInfo.hasDateInIndex())
 import java.util.Date;
 #end
@@ -21,7 +23,9 @@ public class ${entityClassName}Query {
     /**
         * $!col.remarks
         */
+    #if($_useSwagger)
     @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
+    #end
     private $col.javaType $_name.toPropertyName("${col.name}");
 
     #end
@@ -30,7 +34,9 @@ public class ${entityClassName}Query {
     /**
    * 分页
    */
+   #if($_useSwagger)
    @ApiModelProperty("分页查询参数")
+   #end
   private Pager pager;
 
   public Pager getPager(){

@@ -35,7 +35,6 @@ public class MakeService {
     @Resource
     private MakerConfig makerConfig;
 
-
     /**
      * 生成代码
      *
@@ -71,6 +70,7 @@ public class MakeService {
                 makerConfig.getTemplatePath() : VelocityEngineUtils.LOCAL_RESOURCE_PATH;
 
         Map<String, Object> vmContext = makeContext.buildContext();
+        vmContext.put("_useSwagger", makerConfig.isSwagger());
         vmContext.put("_name", new NameStringUtils());
         vmContext.put("_mapper", mapperHelper);
         vmContext.put("_repository", repositoryHelper);
