@@ -85,7 +85,7 @@ List<${entityClassName}> selectByIds(@Param("${pkColProp}s") Collection<$pkCol.j
 #end
 #end
 
-#if($tableInfo.ukColumns.size() > $tableInfo.pkColumns.size())
+#if($tableInfo.ukColumns.size() > 0)
 /**
 * 通过唯一索引精确查询1个返回结果 - 按业务规则需要修改条件
 */
