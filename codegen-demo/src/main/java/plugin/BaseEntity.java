@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 /**
- * @Description:
- * @Author Jinfeng.hu  @Date 2022/4/13
+ * @description:
+ * @author Jinfeng.hu  @Date 2022/4/13
  **/
 @Data
 @Builder

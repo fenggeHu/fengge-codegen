@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @Description: api返回统一格式 - 与前端交互的结构
+ * @description: api返回统一格式 - 与前端交互的结构
  * 对于普通查询返回格式，查询采用offset+limit格式、返回采用data: [] 格式
- * @Author jinfeng.hu  @Date 2022/8/9
+ * @author jinfeng.hu  @Date 2022/8/9
  **/
 @Data
 @Builder

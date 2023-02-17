@@ -8,8 +8,8 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * @Description: 简单的计算分页
- * @Author Jinfeng.hu  @Date 2021-11-01
+ * @description: 简单的计算分页
+ * @author Jinfeng.hu  @Date 2021-11-01
  **/
 @ApiModel("分页")
 public class Pager implements Serializable {

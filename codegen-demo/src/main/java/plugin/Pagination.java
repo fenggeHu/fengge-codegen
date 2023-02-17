@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * @Description: 分页返回的data对象
+ * @description: 分页返回的data对象
  * 如果存在分页业务需求，分页返回格式采用如下格式返回
- * @Author jinfeng.hu  @Date 2022/8/9
+ * @author jinfeng.hu  @Date 2022/8/9
  **/
 @Data
 @Builder
