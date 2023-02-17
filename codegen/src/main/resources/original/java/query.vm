@@ -19,7 +19,7 @@ import java.sql.Timestamp;
 @Data
 @Builder
 public class ${entityClassName}Query {
-    #foreach($col in $tableInfo.indexColumns)
+    #foreach($col in $tableInfo.getAllIndexColumns())
     /**
         * $!col.remarks
         */

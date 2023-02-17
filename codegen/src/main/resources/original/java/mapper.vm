@@ -101,7 +101,7 @@ $_mapper.genAllSqlWithIndex(${tableInfo})
 */
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
-#foreach($col in $tableInfo.indexColumns) 
+#foreach($col in $tableInfo.getAllIndexColumns())
     "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
  #end
     " LIMIT #{pager.pageSize}</script>" })
