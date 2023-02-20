@@ -14,10 +14,9 @@ import java.sql.Timestamp;
  * ${tableInfo.remarks} - 表名${tableInfo.name}
  **/
 public interface ${entityClassName}Mapper {
-    
+
 @Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
-    " VALUES($_mapper.insertValues(${tableInfo}))" ,
-    " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
+    " VALUES($_mapper.insertValues(${tableInfo}))"
     })
     #if(${tableInfo.autoIncrementField})
     @Options(useGeneratedKeys = true, keyProperty = "${tableInfo.autoIncrementField.name}")
@@ -25,7 +24,30 @@ public interface ${entityClassName}Mapper {
     #else
     void insert(${entityClassName} entity);
     #end
+
+@Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
+    " VALUES($_mapper.insertValues(${tableInfo}))" ,
+    " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"
+    })
+    #if(${tableInfo.autoIncrementField})
+    @Options(useGeneratedKeys = true, keyProperty = "${tableInfo.autoIncrementField.name}")
+    long insertWithUpdate(${entityClassName} entity);
+    #else
+    void insertWithUpdate(${entityClassName} entity);
+    #end
     /** 批量插入 */
+@Insert({"<script>" ,
+"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo})) VALUES " ,
+"<foreach collection ='entities' item='it' separator =','>" +
+"($_mapper.batchInsertValues(${tableInfo}))" +
+"</foreach>",
+"</script>"
+})
+#if(${tableInfo.autoIncrementField})
+    @Options(useGeneratedKeys = true, keyProperty = "${tableInfo.autoIncrementField.name}")
+#end
+void batchInsert(@Param("entities") Collection<${entityClassName}> entities);
+/* batch INSERT 使用ON DUPLICATE KEY UPDATE时，返回的集合里只有第一个对象被赋值了自增的id，所以不加注解@Options */
 @Insert({"<script>" ,
 "INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo})) VALUES " ,
 "<foreach collection ='entities' item='it' separator =','>" +
@@ -34,10 +56,7 @@ public interface ${entityClassName}Mapper {
 " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})" ,
 "</script>"
 })
-#if(${tableInfo.autoIncrementField})
-    @Options(useGeneratedKeys = true, keyProperty = "${tableInfo.autoIncrementField.name}")
-#end
-void batchInsert(@Param("entities") Collection<${entityClassName}> entities);
+void batchInsertWithUpdate(@Param("entities") Collection<${entityClassName}> entities);
 
 #if($tableInfo.pkColumns.size() > 0)
 #set($inx=0)
