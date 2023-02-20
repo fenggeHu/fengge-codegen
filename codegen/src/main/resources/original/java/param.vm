@@ -43,12 +43,12 @@ public class ${entityClassName}Param {
     /**
     * param字段是entity的子集
     */
-    public ${entityClassName} toEntity(${entityClassName}Param param) {
+    public ${entityClassName} to${entityClassName}() {
         return ${entityClassName}.builder()
     #foreach($col in $tableInfo.columns)
         #if(!$entityCols.contains($col.name))
             #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
-                .${_name.toPropertyName("${col.name}")}(param.get${_name.toClassName("${col.name}")}())
+                .${_name.toPropertyName("${col.name}")}(this.get${_name.toClassName("${col.name}")}())
             #end
         #end
     #end
