@@ -12,10 +12,10 @@
     <artifactId>codegen-demo</artifactId>
 
     <dependencies>
-        <dependency>
+        <!--dependency>
             <groupId>hu.jinfeng</groupId>
             <artifactId>mybatis-provider</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

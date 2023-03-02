@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  **/
 @EnableConfigurationProperties
 @MapperScan({"${mapperPackage}"})
-@SpringBootApplication(scanBasePackages = {"${basePackage}"})
+@SpringBootApplication(scanBasePackages = {"swagger.config","${basePackage}"})
 public class ${_name.toClassName2("${basePackage}")}Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

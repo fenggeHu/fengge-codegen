@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: max
+
+  datasource:
+    url: ${_db.dbUrl}
+    username: ${_db.username}
+    password: ${_db.password}
+    driver-class-name: ${_db.driverClassName}
+
+server:
+  port: 8080
+  tomcat:
+    remote-ip-header: X-Real-IP
+    protocol-header: X-Forwarded-Proto
+    uri-encoding: UTF-8
+    max-threads: 100
+
+api:
+  swagger:
+    enable: true
+    basePackage: ${basePackage}
+    title: 接口文档
+    description: 更多请咨询服务开发者
+    version: 0.1
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  path: /Users/max/logs
+  config: classpath:logback-stdout.xml
+  level:
+    ${basePackage}: INFO
+    org.springframework.web.client: WARN

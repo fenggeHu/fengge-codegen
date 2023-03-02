@@ -70,6 +70,7 @@ public class MakeService {
                 makerConfig.getTemplatePath() : VelocityEngineUtils.LOCAL_RESOURCE_PATH;
 
         Map<String, Object> vmContext = makeContext.buildContext();
+        vmContext.put("_db", dbHelper);
         vmContext.put("_useSwagger", makerConfig.isSwagger());
         vmContext.put("_name", new NameStringUtils());
         vmContext.put("_mapper", mapperHelper);
@@ -149,6 +150,13 @@ public class MakeService {
             String path = makerConfig.getCodeOutputPath() +
                     FileUtils.package2Path(makeContext.getBasePackage()) + "/" + NameStringUtils.toClassName2(makeContext.getBasePackage()) + "Application.java";
             this.write(path, content);
+        }
+        // resources
+        String yml = FileUtils.readLocalFile(templatePath + "/template/resources/application.yml.vm");
+        if (null != yml) {
+            String content = VelocityEngineUtils.parseTemplate(yml, vmContext);
+            String path = makerConfig.getCodeOutputPath() + "/application.yml";
+            FileUtils.writeFile(path, content);
         }
 
         return true;

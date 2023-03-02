@@ -1,6 +1,7 @@
 package hu.jinfeng.codegen.model;
 
 import hu.jinfeng.codegen.config.MakerConfig;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,16 @@ import java.util.List;
 @Slf4j
 public class DBHelper {
 
+    @Getter
     @Value("${spring.datasource.driverClassName}")
     private String driverClassName;
+    @Getter
     @Value("${spring.datasource.url}")
     private String dbUrl;
+    @Getter
     @Value("${spring.datasource.username}")
     private String username;
+    @Getter
     @Value("${spring.datasource.password}")
     private String password;
     @Autowired
