@@ -3,7 +3,7 @@ package ${repositoryPackage};
 #set($mapperClassName = "${entityClassName}Mapper")
 #set($repositoryClassName = "${entityClassName}Repository")
 import ${entityPackage}.${entityClassName};
-#if($tableInfo.indexColumns.size() >1)
+#if($tableInfo.allIndexColumns.size() >1)
 import ${queryPackage}.${entityClassName}Query;
 #end
 import ${mapperPackage}.${mapperClassName};
@@ -55,7 +55,7 @@ public class ${repositoryClassName} {
         return ${mapper}.selectByPrimaryKey($_repository.pkArgs($tableInfo));
     }
 
-#if($tableInfo.indexColumns.size() >1)
+#if($tableInfo.allIndexColumns.size() >1)
     /**
      * 分页查询
      **/

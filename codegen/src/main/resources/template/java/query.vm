@@ -30,7 +30,7 @@ public class ${entityClassName}Query {
 
     #end
     
-  #if($tableInfo.indexColumns.size() >1)
+  #if($tableInfo.allIndexColumns.size() >1)
     /**
    * 分页
    */

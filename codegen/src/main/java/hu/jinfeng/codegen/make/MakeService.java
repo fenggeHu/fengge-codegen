@@ -80,7 +80,7 @@ public class MakeService {
         vmContext.put("entityPropertyName", NameStringUtils.toPropertyName(entityClassName));
         //1，生产entity对象
         if (null != makeContext.getEntityPackage()) {
-            String vm = FileUtils.readLocalFile(templatePath + "/original/java/entity.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/template/java/entity.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
@@ -90,8 +90,8 @@ public class MakeService {
         }
 
         // 生成query - 超过1个索引字段才生成
-        if (null != makeContext.getQueryPackage() && makeContext.getTableInfo().getIndexColumns().size() > 1) {
-            String vm = FileUtils.readLocalFile(templatePath + "/original/java/query.vm");
+        if (null != makeContext.getQueryPackage() && makeContext.getTableInfo().getAllIndexColumns().size() > 1) {
+            String vm = FileUtils.readLocalFile(templatePath + "/template/java/query.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
@@ -102,7 +102,7 @@ public class MakeService {
 
         //2, 生成mapper
         if (null != makeContext.getMapperPackage()) {
-            String vm = FileUtils.readLocalFile(templatePath + "/original/java/mapper.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/template/java/mapper.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
@@ -124,7 +124,7 @@ public class MakeService {
 
         // 生产param对象
         if (null != makeContext.getParamPackage()) {
-            String vm = FileUtils.readLocalFile(templatePath + "/original/java/param.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/template/java/param.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
@@ -134,7 +134,7 @@ public class MakeService {
         }
         // controller
         if (null != makeContext.getRepositoryPackage()) {
-            String vm = FileUtils.readLocalFile(templatePath + "/original/java/controller.vm");
+            String vm = FileUtils.readLocalFile(templatePath + "/template/java/controller.vm");
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
@@ -143,7 +143,7 @@ public class MakeService {
             }
         }
         // application
-        String vm = FileUtils.readLocalFile(templatePath + "/original/java/application.vm");
+        String vm = FileUtils.readLocalFile(templatePath + "/template/java/application.vm");
         if (null != vm) {
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = makerConfig.getCodeOutputPath() +
