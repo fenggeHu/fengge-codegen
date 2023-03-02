@@ -49,7 +49,7 @@ public class CodegenController {
      */
     @GetMapping(value = "/makeAll")
     public String makeAll(String database, String basePackage) {
-        List<TableInfo> tables = dbHelper.getAllTables(null);
+        List<TableInfo> tables = dbHelper.getAllTables(database);
         for (TableInfo table : tables) {
             makeService.execute(database, table.getName(), basePackage);
         }
