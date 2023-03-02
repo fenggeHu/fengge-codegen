@@ -26,6 +26,13 @@ public class NameStringUtils {
     }
 
     /**
+     * 把点号也变成分隔符
+     */
+    public static String toClassName2(String name) {
+        return toClassName(name.replace(".", "_"));
+    }
+
+    /**
      * 类名转属性名
      */
     public static String classNameToPropertyName(String name) {

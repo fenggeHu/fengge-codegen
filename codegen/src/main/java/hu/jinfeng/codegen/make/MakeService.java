@@ -147,7 +147,7 @@ public class MakeService {
         if (null != vm) {
             String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
             String path = makerConfig.getCodeOutputPath() +
-                    FileUtils.package2Path(makeContext.getBasePackage()) + "/Application.java";
+                    FileUtils.package2Path(makeContext.getBasePackage()) + "/" + NameStringUtils.toClassName2(makeContext.getBasePackage()) + "Application.java";
             this.write(path, content);
         }
 

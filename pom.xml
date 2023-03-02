@@ -9,10 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>mybatis-provider</module>
         <module>codegen</module>
         <module>codegen-demo</module>
-        <module>generator</module>
     </modules>
 
     <properties>
