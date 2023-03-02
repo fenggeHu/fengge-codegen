@@ -24,19 +24,17 @@ import ${entityPackage}.${entityClassName};
 public class ${entityClassName}Param {
     #foreach($col in $tableInfo.columns)
         #if(!$entityCols.contains($col.name))
+            #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
             #if("" != "$!col.remarks")
             /**
             * $!col.remarks
             */
             #end
             #if($_useSwagger)
-            #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
                 @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
-            #else
-                @ApiModelProperty(value = "$_stringUtil.firstLine($!{col.remarks})", hidden = true)
-            #end
             #end
             private $col.javaType $_name.toPropertyName("${col.name}");
+            #end
         #end
     #end
 
