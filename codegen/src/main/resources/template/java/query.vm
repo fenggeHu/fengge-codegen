@@ -45,5 +45,15 @@ public class ${entityClassName}Query {
     }
     return pager;
   }
+
+    public ${entityClassName}Query setPageSize(int size) {
+        if (null == pager) {
+            pager = Pager.getPager(1, size);
+        } else {
+            pager.setPageSize(size);
+            pager.calculateStartAndEndRow();
+        }
+        return this;
+    }
   #end
 }

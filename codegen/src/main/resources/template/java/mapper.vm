@@ -123,7 +123,7 @@ $_mapper.genAllSqlWithIndex(${tableInfo})
 #foreach($col in $tableInfo.getAllIndexColumns())
     "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
  #end
-    " LIMIT #{pager.pageSize}</script>" })
+    "<if test='pager!=null'> LIMIT #{pager.pageSize}</if></script>" })
 List<${entityClassName}> query(${entityClassName}Query query);
 
 /**
