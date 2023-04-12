@@ -57,7 +57,7 @@ public class ${entityClassName} #if("$!entityCols.length"!="" && $entityCols.len
                 @ApiModelProperty(value = "$_stringUtil.firstLine($!{col.remarks})", hidden = true)
             #end
             #end
-            private $col.javaType $_name.toPropertyName("${col.name}");
+            private $col.javaType $_nameUtils.toPropertyName("${col.name}");
         #end
     #end
 }

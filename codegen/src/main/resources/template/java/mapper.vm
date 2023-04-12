@@ -63,7 +63,7 @@ void batchInsertWithUpdate(@Param("entities") Collection<${entityClassName}> ent
 /** 按pk更新所有字段，可置空字段的值 */
 @Update({"<script>UPDATE `${tableInfo.name}` SET ",
 " $_mapper.updateSet(${tableInfo}) " +
-" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
+" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_nameUtils.toPropertyName(${pkName})}#end",
     "</script>" })
     int update(${entityClassName} entity);
 
@@ -71,15 +71,15 @@ void batchInsertWithUpdate(@Param("entities") Collection<${entityClassName}> ent
 @Update({"<script>UPDATE `${tableInfo.name}` SET ",
 #foreach($pkName in $tableInfo.pkNames)
 #if(${foreach.index}==0)
-"`$pkName` = #{$_name.toPropertyName(${pkName})}" +
+"`$pkName` = #{$_nameUtils.toPropertyName(${pkName})}" +
 #end
 #end
 #foreach($col in $tableInfo.updateColumns)
     #if(!$tableInfo.pkNames.contains(${col.name}))
-        "<if test='$_name.toPropertyName(${col.name})!=null'>, `${col.name}`=#{$_name.toPropertyName("${col.name}")}</if>"+ 
+        "<if test='$_nameUtils.toPropertyName(${col.name})!=null'>, `${col.name}`=#{$_nameUtils.toPropertyName("${col.name}")}</if>"+
     #end
 #end
-" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_name.toPropertyName(${pkName})}#end",
+" WHERE #foreach($pkName in $tableInfo.pkNames)#if(${foreach.index}!=0) AND #end `$pkName` = #{$_nameUtils.toPropertyName(${pkName})}#end",
     "</script>" })
     int updateSelective(${entityClassName} entity);
 #end
@@ -91,7 +91,7 @@ ${entityClassName} selectByPrimaryKey($_mapper.pkParam(${tableInfo}));
 
 #if($tableInfo.pkColumns.size() == 1)
 #set($pkCol = $tableInfo.pkColumns.get(0))
-#set($pkColProp = $_name.toPropertyName($pkCol.name))
+#set($pkColProp = $_nameUtils.toPropertyName($pkCol.name))
 /** 按PK批量查询 */
 @Select({"<script>",
     "SELECT * FROM `${tableInfo.name}` WHERE `$pkCol.name` in ",
@@ -121,7 +121,7 @@ $_mapper.genAllSqlWithIndex(${tableInfo})
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
 #foreach($col in $tableInfo.getAllIndexColumns())
-    "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
+    "<if test='$_nameUtils.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameUtils.toPropertyName(${col.name})}</if>" +
  #end
     "<if test='pager!=null'> LIMIT #{pager.pageSize}</if></script>" })
 List<${entityClassName}> query(${baseClassName}Query query);
@@ -132,7 +132,7 @@ List<${entityClassName}> query(${baseClassName}Query query);
 @Select({"<script>",
 "SELECT * FROM `${tableInfo.name}` WHERE 1=1 " +
 #foreach($col in $tableInfo.allIndexColumns)
-    "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
+    "<if test='$_nameUtils.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_nameUtils.toPropertyName(${col.name})}</if>" +
  #end
     " LIMIT #{pager.startRow}, #{pager.pageSize}" +
     "</script>" })

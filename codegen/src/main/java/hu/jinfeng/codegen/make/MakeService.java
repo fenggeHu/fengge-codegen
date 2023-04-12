@@ -75,11 +75,12 @@ public class MakeService {
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_db", dbHelper);
         vmContext.put("_useSwagger", makerConfig.isSwagger());
-        vmContext.put("_name", new NameStringUtils());
+        vmContext.put("_nameUtils", new NameStringUtils());
+        vmContext.put("_name", nameHelper);
         vmContext.put("_mapper", mapperHelper);
         vmContext.put("_repository", repositoryHelper);
         vmContext.put("_stringUtil", new StringUtil());
-        String baseClassName = NameStringUtils.toClassName(mapperHelper.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
+        String baseClassName = mapperHelper.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase());
         vmContext.put("baseClassName", baseClassName);
         String entityClassName = nameHelper.entityClassName(baseClassName);
         vmContext.put("entityClassName", entityClassName);

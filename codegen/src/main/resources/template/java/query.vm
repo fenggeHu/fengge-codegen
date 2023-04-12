@@ -26,7 +26,7 @@ public class ${baseClassName}Query {
     #if($_useSwagger)
     @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
     #end
-    private $col.javaType $_name.toPropertyName("${col.name}");
+    private $col.javaType $_nameUtils.toPropertyName("${col.name}");
 
     #end
     

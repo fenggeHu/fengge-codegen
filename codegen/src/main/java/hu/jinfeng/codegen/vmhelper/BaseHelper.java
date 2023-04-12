@@ -23,7 +23,7 @@ public class BaseHelper {
                 && tableName.toLowerCase().startsWith(makerConfig.getTablePrefixRemove().toLowerCase())) {
             return tableName.substring(makerConfig.getTablePrefixRemove().length());
         }
-        return tableName;
+        return NameStringUtils.toClassName(tableName);
     }
 
     /**

@@ -24,9 +24,9 @@ import java.util.List;
 #if($_useSwagger)
 @Api(tags = "$!{tableInfo.remarks}")
 #end
-@RequestMapping("/v1/$_name.classNameToPropertyName(${baseClassName})")
+@RequestMapping("/v1/$_nameUtils.classNameToPropertyName(${baseClassName})")
 public class ${controllerClassName} {
-#set($repositoryPropertyName=$_name.classNameToPropertyName(${repositoryClassName}))
+#set($repositoryPropertyName=$_nameUtils.classNameToPropertyName(${repositoryClassName}))
     @Autowired
     private $repositoryClassName $repositoryPropertyName;
 

@@ -14,7 +14,7 @@ import java.util.List;
  **/
 @Component
 public class ${repositoryClassName} {
-    #set($mapper = $_name.classNameToPropertyName(${mapperClassName}))
+    #set($mapper = $_nameUtils.classNameToPropertyName(${mapperClassName}))
     @Autowired
     private $mapperClassName $mapper;
 

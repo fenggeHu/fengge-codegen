@@ -33,7 +33,7 @@ public class ${baseClassName}Param {
             #if($_useSwagger)
                 @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
             #end
-            private $col.javaType $_name.toPropertyName("${col.name}");
+            private $col.javaType $_nameUtils.toPropertyName("${col.name}");
             #end
         #end
     #end
@@ -46,7 +46,7 @@ public class ${baseClassName}Param {
     #foreach($col in $tableInfo.columns)
         #if(!$entityCols.contains($col.name))
             #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
-                .${_name.toPropertyName("${col.name}")}(this.get${_name.toClassName("${col.name}")}())
+                .${_nameUtils.toPropertyName("${col.name}")}(this.get${_nameUtils.toClassName("${col.name}")}())
             #end
         #end
     #end

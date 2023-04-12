@@ -222,7 +222,7 @@ public class MapperHelper extends BaseHelper {
     }
 
     public String genAllSqlWithIndex(final TableInfo table) {
-        String entityClassName = nameHelper.entityClassName(NameStringUtils.toClassName(this.getBaseClassName(table.getName().toLowerCase())));
+        String entityClassName = nameHelper.entityClassName(this.getBaseClassName(table.getName().toLowerCase()));
         return genAllSqlWithIndex(table, entityClassName);
     }
 
