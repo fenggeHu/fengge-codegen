@@ -46,6 +46,10 @@ public class MakerConfig {
      */
 //    @Value("${entity.column.include:}")
     private String[] entityColumnInclude;
+    /**
+     * 指定entity class的后缀
+     */
+    private String entityClassSuffix;
 
     public String getCodeOutputPath() {
         String resource = this.getClass().getResource("/").getPath();

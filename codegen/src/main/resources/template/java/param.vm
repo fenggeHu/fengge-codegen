@@ -21,7 +21,7 @@ import ${entityPackage}.${entityClassName};
 @ApiModel("$!{tableInfo.remarks}")
 #end
 #end
-public class ${entityClassName}Param {
+public class ${baseClassName}Param {
     #foreach($col in $tableInfo.columns)
         #if(!$entityCols.contains($col.name))
             #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))

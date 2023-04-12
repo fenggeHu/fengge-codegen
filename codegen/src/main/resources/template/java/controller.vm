@@ -1,11 +1,11 @@
 package ${controllerPackage};
 
 import ${entityPackage}.${entityClassName};
-import ${paramPackage}.${entityClassName}Param;
+import ${paramPackage}.${baseClassName}Param;
 #if($tableInfo.allIndexColumns.size() >1)
-import ${queryPackage}.${entityClassName}Query;
+import ${queryPackage}.${baseClassName}Query;
 #end
-import ${repositoryPackage}.${entityClassName}Repository;
+import ${repositoryPackage}.${repositoryClassName};
 #if($_useSwagger)
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,15 +24,14 @@ import java.util.List;
 #if($_useSwagger)
 @Api(tags = "$!{tableInfo.remarks}")
 #end
-@RequestMapping("/v1/$_name.classNameToPropertyName("${entityClassName}")")
-public class ${entityClassName}Controller {
-    #set($repositoryClassName = "${entityClassName}Repository")
-    #set($repositoryPropertyName = "${entityPropertyName}Repository")
+@RequestMapping("/v1/$_name.classNameToPropertyName(${baseClassName})")
+public class ${controllerClassName} {
+#set($repositoryPropertyName=$_name.classNameToPropertyName(${repositoryClassName}))
     @Autowired
     private $repositoryClassName $repositoryPropertyName;
 
     @PostMapping("/save")
-    public ${entityClassName} save(@RequestBody @Valid ${entityClassName}Param param) {
+    public ${entityClassName} save(@RequestBody @Valid ${baseClassName}Param param) {
         ${entityClassName} entity = param.to${entityClassName}();
         ${repositoryPropertyName}.insert(entity);
         return entity;
@@ -46,7 +45,7 @@ public class ${entityClassName}Controller {
     }
 #if($tableInfo.allIndexColumns.size() >1)
     @GetMapping("/list")
-    public List<${entityClassName}> list(@RequestBody @Valid ${entityClassName}Query query) {
+    public List<${entityClassName}> list(@RequestBody @Valid ${baseClassName}Query query) {
         query.getPager().calculateStartAndEndRow();
         return ${repositoryPropertyName}.queryWithPaging(query);
     }

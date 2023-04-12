@@ -5,6 +5,7 @@ import hu.jinfeng.codegen.config.MakerConfig;
 import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.codegen.vmhelper.MapperHelper;
 import hu.jinfeng.codegen.model.DBHelper;
+import hu.jinfeng.codegen.vmhelper.NameHelper;
 import hu.jinfeng.codegen.vmhelper.RepositoryHelper;
 import hu.jinfeng.commons.utils.FileUtils;
 import hu.jinfeng.commons.utils.NameStringUtils;
@@ -32,8 +33,10 @@ public class MakeService {
     private MapperHelper mapperHelper;
     @Autowired
     private RepositoryHelper repositoryHelper;
-    @Resource
+    @Autowired
     private MakerConfig makerConfig;
+    @Autowired
+    private NameHelper nameHelper;
 
     /**
      * 生成代码
@@ -76,9 +79,17 @@ public class MakeService {
         vmContext.put("_mapper", mapperHelper);
         vmContext.put("_repository", repositoryHelper);
         vmContext.put("_stringUtil", new StringUtil());
-        String entityClassName = NameStringUtils.toClassName(mapperHelper.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
+        String baseClassName = NameStringUtils.toClassName(mapperHelper.getBaseClassName(makeContext.getTableInfo().getName().toLowerCase()));
+        vmContext.put("baseClassName", baseClassName);
+        String entityClassName = nameHelper.entityClassName(baseClassName);
         vmContext.put("entityClassName", entityClassName);
-        vmContext.put("entityPropertyName", NameStringUtils.toPropertyName(entityClassName));
+        vmContext.put("entityPropertyName", NameStringUtils.toPropertyName(baseClassName));
+        String mapperClassName = nameHelper.mapperClassName(baseClassName);
+        vmContext.put("mapperClassName", mapperClassName);
+        String repositoryClassName = nameHelper.repositoryClassName(baseClassName);
+        vmContext.put("repositoryClassName", repositoryClassName);
+        String controllerClassName = nameHelper.controllerClassName(baseClassName);
+        vmContext.put("controllerClassName", controllerClassName);
         //1，生产entity对象
         if (null != makeContext.getEntityPackage()) {
             String vm = FileUtils.readLocalFile(templatePath + "/template/java/entity.vm");
@@ -96,7 +107,7 @@ public class MakeService {
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
-                        FileUtils.package2Path(makeContext.getQueryPackage()) + "/" + entityClassName + "Query.java";
+                        FileUtils.package2Path(makeContext.getQueryPackage()) + "/" + baseClassName + "Query.java";
                 this.write(path, content);
             }
         }
@@ -107,7 +118,7 @@ public class MakeService {
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
-                        FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + entityClassName + "Mapper.java";
+                        FileUtils.package2Path(makeContext.getMapperPackage()) + "/" + mapperClassName + ".java";
                 content = content.replace("  ", " ").replace("  ", " ");
                 this.write(path, content);
             }
@@ -118,7 +129,7 @@ public class MakeService {
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
-                        FileUtils.package2Path(makeContext.getRepositoryPackage()) + "/" + entityClassName + "Repository.java";
+                        FileUtils.package2Path(makeContext.getRepositoryPackage()) + "/" + repositoryClassName + ".java";
                 this.write(path, content);
             }
         }
@@ -129,7 +140,7 @@ public class MakeService {
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
-                        FileUtils.package2Path(makeContext.getParamPackage()) + "/" + entityClassName + "Param.java";
+                        FileUtils.package2Path(makeContext.getParamPackage()) + "/" + baseClassName + "Param.java";
                 this.write(path, content);
             }
         }
@@ -139,7 +150,7 @@ public class MakeService {
             if (null != vm) {
                 String content = VelocityEngineUtils.parseTemplate(vm, vmContext);
                 String path = makerConfig.getCodeOutputPath() +
-                        FileUtils.package2Path(makeContext.getControllerPackage()) + "/" + entityClassName + "Controller.java";
+                        FileUtils.package2Path(makeContext.getControllerPackage()) + "/" + controllerClassName + ".java";
                 this.write(path, content);
             }
         }

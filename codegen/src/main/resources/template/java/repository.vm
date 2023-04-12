@@ -1,10 +1,8 @@
 package ${repositoryPackage};
 
-#set($mapperClassName = "${entityClassName}Mapper")
-#set($repositoryClassName = "${entityClassName}Repository")
 import ${entityPackage}.${entityClassName};
 #if($tableInfo.allIndexColumns.size() >1)
-import ${queryPackage}.${entityClassName}Query;
+import ${queryPackage}.${baseClassName}Query;
 #end
 import ${mapperPackage}.${mapperClassName};
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +57,7 @@ public class ${repositoryClassName} {
     /**
      * 分页查询
      **/
-    public List<${entityClassName}> queryWithPaging(${entityClassName}Query query) {
+    public List<${entityClassName}> queryWithPaging(${baseClassName}Query query) {
         query.getPager().calculateStartAndEndRow();
         return ${mapper}.queryWithPaging(query);
     }

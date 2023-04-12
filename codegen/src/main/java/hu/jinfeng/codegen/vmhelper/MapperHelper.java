@@ -3,6 +3,7 @@ package hu.jinfeng.codegen.vmhelper;
 import hu.jinfeng.codegen.model.ColumnInfo;
 import hu.jinfeng.codegen.model.TableInfo;
 import hu.jinfeng.commons.utils.NameStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
  **/
 @Component
 public class MapperHelper extends BaseHelper {
+    @Autowired
+    private NameHelper nameHelper;
+
     public String insertColumns(final TableInfo tableInfo) {
         StringBuilder sb = new StringBuilder();
         int start = 0;
@@ -218,7 +222,7 @@ public class MapperHelper extends BaseHelper {
     }
 
     public String genAllSqlWithIndex(final TableInfo table) {
-        String entityClassName = NameStringUtils.toClassName(this.getBaseClassName(table.getName().toLowerCase()));
+        String entityClassName = nameHelper.entityClassName(NameStringUtils.toClassName(this.getBaseClassName(table.getName().toLowerCase())));
         return genAllSqlWithIndex(table, entityClassName);
     }
 

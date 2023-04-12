@@ -2,7 +2,7 @@ spring:
   application:
     name: fengge-codegen
   profiles:
-    active: max
+    active: dev
   velocity:
     properties:
       input:
@@ -16,9 +16,11 @@ maker:
   table-prefix-remove: tb_
   mapper-insert-exclude: create_at,update_at,created_at,updated_at
   mapper-update-exclude: create_at,update_at,created_at,updated_at
-  entity-column-include: status,created_at,updated_at   # 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段，如果不配置该属性将不会继承
+#  entity-column-include: status,created_at,updated_at   # 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段，如果不配置该属性将不会继承
+  entity-class-suffix: DO
   code-output-path: /codegen-demo/src/main/java/
   template-path:
+  swagger: false  # 开/关swagger注解
 
 server:
   port: 8080
@@ -28,11 +30,9 @@ server:
     uri-encoding: UTF-8
     max-threads: 10
 
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-
 
 logging:
 #  config: classpath:logback-spring.xml

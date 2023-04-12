@@ -2,7 +2,7 @@ package ${mapperPackage};
 import org.apache.ibatis.annotations.*;
 import ${entityPackage}.${entityClassName};
 #if($tableInfo.allIndexColumns.size() >1)
-import ${queryPackage}.${entityClassName}Query;
+import ${queryPackage}.${baseClassName}Query;
 #end
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 /**
  * ${tableInfo.remarks} - 表名${tableInfo.name}
  **/
-public interface ${entityClassName}Mapper {
+public interface ${mapperClassName} {
 
 @Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
     " VALUES($_mapper.insertValues(${tableInfo}))"
@@ -124,7 +124,7 @@ $_mapper.genAllSqlWithIndex(${tableInfo})
     "<if test='$_name.toPropertyName(${col.name})!=null'> AND `$col.name` = #{$_name.toPropertyName(${col.name})}</if>" +
  #end
     "<if test='pager!=null'> LIMIT #{pager.pageSize}</if></script>" })
-List<${entityClassName}> query(${entityClassName}Query query);
+List<${entityClassName}> query(${baseClassName}Query query);
 
 /**
 * 分页查询
@@ -136,7 +136,7 @@ List<${entityClassName}> query(${entityClassName}Query query);
  #end
     " LIMIT #{pager.startRow}, #{pager.pageSize}" +
     "</script>" })
-List<${entityClassName}> queryWithPaging(${entityClassName}Query query);
+List<${entityClassName}> queryWithPaging(${baseClassName}Query query);
 #end
 
 }
