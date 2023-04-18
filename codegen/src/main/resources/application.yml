@@ -16,6 +16,7 @@ maker:
   table-prefix-remove: tb_
   mapper-insert-exclude: create_at,update_at,created_at,updated_at
   mapper-update-exclude: create_at,update_at,created_at,updated_at
+  mapper-plus-enabled: false     # 是否使用mybatis-plus
 #  entity-column-include: status,created_at,updated_at   # 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段，如果不配置该属性将不会继承
   entity-class-suffix: DO
   code-output-path: /codegen-demo/src/main/java/

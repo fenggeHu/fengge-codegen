@@ -42,6 +42,10 @@ public class MakerConfig {
 //    @Value("${mapper.update.exclude:}")
     private String[] mapperUpdateExclude;
     /**
+     * 是否使用mybatis-plus
+     */
+    private boolean mapperPlusEnabled;
+    /**
      * 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段
      */
 //    @Value("${entity.column.include:}")

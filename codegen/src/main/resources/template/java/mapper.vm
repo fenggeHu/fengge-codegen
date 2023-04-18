@@ -1,5 +1,8 @@
 package ${mapperPackage};
 import org.apache.ibatis.annotations.*;
+#if($_config.mapperPlusEnabled)
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+#end
 import ${entityPackage}.${entityClassName};
 #if($tableInfo.allIndexColumns.size() >1)
 import ${queryPackage}.${baseClassName}Query;
@@ -13,8 +16,9 @@ import java.sql.Timestamp;
 /**
  * ${tableInfo.remarks} - 表名${tableInfo.name}
  **/
-public interface ${mapperClassName} {
+public interface ${mapperClassName} #if($_config.mapperPlusEnabled) extends BaseMapper<${entityClassName}> #end {
 
+#if($_config.mapperPlusEnabled == false)
 @Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
     " VALUES($_mapper.insertValues(${tableInfo}))"
     })
@@ -24,7 +28,7 @@ public interface ${mapperClassName} {
     #else
     void insert(${entityClassName} entity);
     #end
-
+#end
 @Insert({"INSERT INTO `${tableInfo.name}`($_mapper.insertColumns(${tableInfo}))" ,
     " VALUES($_mapper.insertValues(${tableInfo}))" ,
     " ON DUPLICATE KEY UPDATE $_mapper.onDuplicateKeyUpdate(${tableInfo})"

@@ -1,5 +1,8 @@
 package ${entityPackage};
 
+#if($_config.mapperPlusEnabled)
+import com.baomidou.mybatisplus.annotation.TableName;
+#end
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -41,6 +44,9 @@ import java.sql.Timestamp;
 #else
 @ApiModel("$!{tableInfo.remarks}")
 #end
+#end
+#if($_config.mapperPlusEnabled)
+@TableName("${tableInfo.name}")
 #end
 public class ${entityClassName} #if("$!entityCols.length"!="" && $entityCols.length>0) extends BaseEntity #end{
     #foreach($col in $tableInfo.columns)

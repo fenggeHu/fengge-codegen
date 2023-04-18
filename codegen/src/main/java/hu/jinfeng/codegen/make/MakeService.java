@@ -74,6 +74,7 @@ public class MakeService {
 
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_db", dbHelper);
+        vmContext.put("_config", makerConfig);
         vmContext.put("_useSwagger", makerConfig.isSwagger());
         vmContext.put("_nameUtils", new NameStringUtils());
         vmContext.put("_name", nameHelper);
