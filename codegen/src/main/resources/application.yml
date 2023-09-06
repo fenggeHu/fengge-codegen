@@ -19,6 +19,7 @@ maker:
   entity-column-include: status,created_at,updated_at   # 指定Entity基类属性，并在生成entity时继承Entity并过滤掉相关属性/字段，如果不配置该属性将不会继承
   code-output-path: /codegen-demo/src/main/java/
   template-path:
+  swagger: false
 
 server:
   port: 8080

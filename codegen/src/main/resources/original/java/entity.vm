@@ -4,8 +4,10 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+#if($_config.swagger)
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+#end
 #if("$!entityCols.length"!="" && $entityCols.length>0)
 import plugin.BaseEntity;
 #end
@@ -20,10 +22,12 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+#if($_config.swagger)
 #if($!tableInfo.remarks =='')
 @ApiModel("$!{tableInfo.name}")
 #else
 @ApiModel("$!{tableInfo.remarks}")
+#end
 #end
 public class ${entityClassName} #if("$!entityCols.length"!="" && $entityCols.length>0) extends BaseEntity #end{
     #foreach($col in $tableInfo.columns)
@@ -33,11 +37,14 @@ public class ${entityClassName} #if("$!entityCols.length"!="" && $entityCols.len
             * $!col.remarks
             */
             #end
+
+        #if($_config.swagger)
             #if($tableInfo.insertColumns.contains($col) || $tableInfo.updateColumns.contains($col))
                 @ApiModelProperty("$_stringUtil.firstLine($!{col.remarks})")
             #else
                 @ApiModelProperty(value = "$_stringUtil.firstLine($!{col.remarks})", hidden = true)
             #end
+        #end
             private $col.javaType $_name.toPropertyName("${col.name}");
         #end
     #end

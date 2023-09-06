@@ -30,6 +30,10 @@ public class MakerConfig {
 //    @Value("${template.path}")
     private String templatePath;
     /**
+     * 是否使用swagger
+     */
+    private boolean swagger;
+    /**
      * insert语句排除字段
      */
 //    @Value("${mapper.insert.exclude:}")

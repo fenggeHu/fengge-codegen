@@ -72,6 +72,7 @@ public class MakeService {
 
         Map<String, Object> vmContext = makeContext.buildContext();
         vmContext.put("_name", new NameStringUtils());
+        vmContext.put("_config", makerConfig);
         vmContext.put("_mapper", mapperHelper);
         vmContext.put("_repository", repositoryHelper);
         vmContext.put("_stringUtil", new StringUtil());
